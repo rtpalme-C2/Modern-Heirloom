@@ -43,12 +43,12 @@ body{
 /* ── HEADER ── */
 header{
   background:var(--near-black);
-  padding:52px 40px 44px;
+  padding:40px 40px 36px;
   position:relative;
   overflow:hidden;
 }
 .hdr-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.hdr-inner{position:relative;z-index:1;max-width:960px;margin:0 auto;display:flex;align-items:flex-start;gap:24px}
+.hdr-inner{position:relative;z-index:1;display:flex;align-items:flex-start;gap:24px}
 .hdr-mark{flex-shrink:0;margin-top:4px}
 .hdr-text{}
 .hdr-eyebrow{
@@ -56,7 +56,7 @@ header{
   color:#C8A96E;font-weight:500;margin-bottom:12px;opacity:.9;
 }
 .hdr-name{
-  font-size:clamp(2rem,4vw,2.8rem);
+  font-size:clamp(1.6rem,3vw,2.2rem);
   font-weight:500;color:#F2EDE8;
   letter-spacing:-.02em;line-height:1;
   margin-bottom:6px;
@@ -97,7 +97,7 @@ header{
 
 /* ── CONFIG NOTICE ── */
 .config-notice{
-  margin:20px 40px;padding:16px 20px;
+  margin:16px 40px;padding:14px 18px;
   background:#fdf8ed;border:1.5px solid rgba(200,169,110,.4);border-radius:8px;
   font-size:.8rem;line-height:1.6;color:#5a4800;
 }
@@ -109,8 +109,7 @@ header{
 
 /* ── TOOLBAR ── */
 .toolbar{
-  max-width:960px;margin:0 auto;
-  padding:24px 40px 0;
+  padding:20px 40px 0;
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;
 }
 .search-wrap{
@@ -150,9 +149,8 @@ header{
 
 /* ── STATS ── */
 .stats-row{
-  max-width:960px;margin:0 auto;
   padding:20px 40px 0;
-  display:flex;gap:16px;flex-wrap:wrap;
+  display:flex;gap:12px;flex-wrap:wrap;
 }
 .stat-pill{
   background:#fff;border:1px solid var(--border);
@@ -165,7 +163,7 @@ header{
 .stat-value.gold{color:var(--champagne)}
 
 /* ── ITEM GRID ── */
-.items-wrap{max-width:960px;margin:0 auto;padding:24px 40px 80px}
+.items-wrap{padding:20px 40px 80px}
 .items-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -442,16 +440,31 @@ header{
 .toast.err{border-left-color:#C46A5A}
 
 /* ── RESPONSIVE ── */
-@media(max-width:600px){
-  header{padding:40px 20px 36px}
-  .hdr-inner{gap:16px}
-  .sync-bar{padding:8px 20px}
-  .toolbar{padding:16px 20px 0}
-  .stats-row{padding:16px 20px 0}
-  .items-wrap{padding:16px 20px 60px}
+@media(max-width:768px){
+  header{padding:28px 24px 24px}
+  .hdr-inner{gap:14px}
+  .hdr-mark svg{width:52px;height:34px}
+  .sync-bar{padding:8px 24px}
+  .stats-row{padding:14px 24px 0;gap:8px}
+  .stat-pill{padding:10px 14px;min-width:80px}
+  .toolbar{padding:14px 24px 0;gap:8px}
+  .items-wrap{padding:14px 24px 60px}
+  .items-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  header{padding:22px 16px 20px}
+  .hdr-inner{gap:12px}
+  .hdr-mark svg{width:44px;height:28px}
+  .sync-bar{padding:8px 16px;flex-direction:column;align-items:flex-start}
+  .stats-row{padding:12px 16px 0}
+  .stat-pill{min-width:72px;padding:8px 12px}
+  .toolbar{padding:12px 16px 0}
+  .search-wrap{min-width:0}
+  .items-wrap{padding:12px 16px 60px}
   .form-grid{grid-template-columns:1fr}
-  .modal-body{padding:20px}
-  .modal-footer{padding:12px 20px}
+  .modal-body{padding:16px}
+  .modal-footer{padding:10px 16px}
+  .btn-add{padding:8px 14px;font-size:10px}
 }
 </style>
 </head>
@@ -514,6 +527,10 @@ header{
   <code>YOUR_CLIENT_ID</code> and <code>YOUR_API_KEY</code> with your Google Cloud credentials from the Sashiko Craft GCP project.
 </div>
 
+<div class="stats-row" id="stats-row">
+  <!-- populated by JS -->
+</div>
+
 <!-- ── TOOLBAR ── -->
 <div class="toolbar">
   <div class="search-wrap">
@@ -543,10 +560,6 @@ header{
 </div>
 
 <!-- ── STATS ── -->
-<div class="stats-row" id="stats-row">
-  <!-- populated by JS -->
-</div>
-
 <!-- ── ITEMS ── -->
 <div class="items-wrap">
   <div class="items-grid" id="items-grid">
