@@ -509,6 +509,77 @@ header{
   letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .15s;
 }
 .btn-pat-save:hover { background: var(--mh-mid); }
+
+/* ── IMAGES ── */
+.img-add-row{display:flex;gap:8px;align-items:flex-end}
+.img-add-row .form-field{flex:1}
+.img-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.img-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;background:#fff;border-radius:8px;
+  border:1px solid var(--border);
+}
+.img-thumb{
+  width:48px;height:48px;border-radius:6px;
+  object-fit:cover;flex-shrink:0;
+  background:rgba(28,8,16,.06);
+  border:1px solid var(--border);
+}
+.img-thumb-placeholder{
+  width:48px;height:48px;border-radius:6px;flex-shrink:0;
+  background:rgba(28,8,16,.06);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-faint);font-size:18px;
+}
+.img-url{
+  flex:1;font-size:10px;color:var(--text-dim);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.img-del{
+  background:none;border:none;color:var(--text-faint);
+  cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;
+  transition:color .15s;flex-shrink:0;
+}
+.img-del:hover{color:#C46A5A}
+
+/* Card image strip */
+.card-img-strip{
+  width:100%;aspect-ratio:16/9;overflow:hidden;position:relative;
+  background:var(--near-black);
+}
+.card-img-main{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+.card-img-count{
+  position:absolute;bottom:8px;right:10px;
+  background:rgba(28,8,16,.65);color:rgba(242,237,232,.85);
+  font-size:9px;letter-spacing:.08em;font-weight:500;
+  padding:3px 8px;border-radius:20px;
+  backdrop-filter:blur(4px);
+}
+
+/* Modal image strip (viewer) */
+.img-strip{
+  display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;
+  scroll-snap-type:x mandatory;
+}
+.img-strip::-webkit-scrollbar{height:3px}
+.img-strip::-webkit-scrollbar-track{background:transparent}
+.img-strip::-webkit-scrollbar-thumb{background:rgba(28,8,16,.2);border-radius:2px}
+.img-strip-thumb{
+  flex-shrink:0;width:80px;height:60px;border-radius:6px;
+  object-fit:cover;scroll-snap-align:start;
+  border:1.5px solid transparent;cursor:pointer;transition:border-color .15s;
+}
+.img-strip-thumb.active{border-color:var(--mh-rose)}
+.img-viewer{
+  width:100%;aspect-ratio:16/9;background:rgba(28,8,16,.06);
+  border-radius:8px;overflow:hidden;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;
+}
+.img-viewer img{width:100%;height:100%;object-fit:contain;display:block}
+.img-viewer-empty{color:var(--text-faint);font-size:12px}
+
 </style>
 </head>
 <body>
@@ -705,6 +776,20 @@ header{
           <label class="channel-check"><input type="checkbox" name="channel" value="Mercari"> Mercari</label>
           <label class="channel-check"><input type="checkbox" name="channel" value="Other"> Other</label>
         </div>
+      </div>
+
+
+      <!-- Images -->
+      <div class="form-section" id="img-section">
+        <div class="form-section-label">Images</div>
+        <div class="img-add-row">
+          <div class="form-field">
+            <label>Cloudinary URL</label>
+            <input type="url" id="img-url-input" placeholder="https://res.cloudinary.com/…">
+          </div>
+          <button class="btn-add" style="flex-shrink:0;margin-bottom:0" id="img-add-btn">+ Add</button>
+        </div>
+        <div class="img-list" id="img-list"></div>
       </div>
 
       <!-- Status & Receipt -->
@@ -971,6 +1056,7 @@ function newId(){
 
 // ── APP STATE ──────────────────────────────────────────────────────────────
 let filterStatus = '';
+let pendingImages = [];
 let filterChannel = '';
 let searchQuery = '';
 
@@ -1040,133 +1126,103 @@ function renderGrid() {
   });
 
   if (!list.length) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <svg class="es-mark" width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <rect width="48" height="48" rx="12" fill="rgba(28,8,16,.06)"/>
-          <path d="M14 24 C14 14 18 10 24 10 C30 10 34 14 34 24" stroke="rgba(28,8,16,.2)" stroke-width="3" stroke-linecap="round" fill="none"/>
-          <rect x="11" y="24" width="26" height="14" rx="4" fill="rgba(28,8,16,.08)"/>
-        </svg>
-        <p>${items.length === 0 ? 'No items yet' : 'No items match your filters'}</p>
-        <span>${items.length === 0 ? 'Tap + Add Item to get started' : 'Try adjusting your search or filters'}</span>
-      </div>`;
+    grid.innerHTML =
+      '<div class="empty-state" style="grid-column:1/-1">' +
+      '<svg class="es-mark" width="48" height="48" viewBox="0 0 48 48" fill="none">' +
+      '<rect width="48" height="48" rx="12" fill="rgba(28,8,16,.06)"/>' +
+      '<path d="M14 24 C14 14 18 10 24 10 C30 10 34 14 34 24" stroke="rgba(28,8,16,.2)" stroke-width="3" stroke-linecap="round" fill="none"/>' +
+      '<rect x="11" y="24" width="26" height="14" rx="4" fill="rgba(28,8,16,.08)"/>' +
+      '</svg>' +
+      '<p>' + (items.length === 0 ? 'No items yet' : 'No items match your filters') + '</p>' +
+      '<span>' + (items.length === 0 ? 'Tap + Add Item to get started' : 'Try adjusting your search or filters') + '</span>' +
+      '</div>';
     return;
   }
 
   const statusCls   = { active:'status-active', sold:'status-sold', draft:'status-draft', hold:'status-hold' };
   const statusLabel = { active:'Active', sold:'Sold', draft:'Draft', hold:'Hold' };
 
-  grid.innerHTML = list.map(item => {
+  grid.innerHTML = list.map(function(item) {
     const price  = Number(item.price)  || 0;
     const cost   = Number(item.cost)   || 0;
     const margin = (price && cost) ? price - cost : null;
     const marginPct = (margin != null && cost) ? Math.round(margin / cost * 100) : null;
-    const channels = (item.channels || []).map(c => `<span class="channel-badge">${c}</span>`).join('');
 
-    const priceDisplay = (item.status === 'sold' && item.soldPrice)
-      ? `<span class="price-current">${fmt(item.soldPrice)}</span><span class="price-cost">sold · cost ${fmt(cost)}</span>`
-      : `<span class="price-current">${fmt(price)}</span><span class="price-cost">cost ${fmt(cost)}</span>`;
-
-    const marginBadge = margin != null
-      ? `<span class="price-margin ${margin >= 0 ? 'margin-pos' : 'margin-neg'}">${margin >= 0 ? '+' : ''}${fmt(margin)}${marginPct != null ? ` · ${marginPct}%` : ''}</span>`
-      : '';
-
-    const phEntries = (item.priceHistory || []).slice(-3).map((ph, idx, arr) => {
-      const prev = idx > 0 ? arr[idx-1].price : null;
-      const delta = prev != null
-        ? `<span class="ph-delta ${ph.price >= prev ? 'up' : 'down'}">${ph.price >= prev ? '▲' : '▼'} ${fmt(Math.abs(ph.price - prev))}</span>`
-        : '';
-      return `<div class="ph-entry"><span class="ph-date">${fmtDate(ph.date)||ph.date}</span><span class="ph-price">${fmt(ph.price)}</span>${delta}</div>`;
+    const channels = (item.channels || []).map(function(c) {
+      return '<span class="channel-badge">' + c + '</span>';
     }).join('');
 
-    const phSection = phEntries ? `
-      <div class="price-history-mini">
-        <div class="ph-label">Price History</div>
-        <div class="ph-entries">${phEntries}</div>
-      </div>` : '';
+    const priceDisplay = (item.status === 'sold' && item.soldPrice)
+      ? '<span class="price-current">' + fmt(item.soldPrice) + '</span><span class="price-cost">sold · cost ' + fmt(cost) + '</span>'
+      : '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">cost ' + fmt(cost) + '</span>';
 
-    return `
-      <div class="item-card" onclick="openModal('${item.id}')">
-        <div class="card-top">
-          <svg class="card-top-bg" viewBox="0 0 280 80" preserveAspectRatio="xMidYMid slice">
-            <path d="M-10 50 C40 20 100 45 180 18 C230 4 265 22 300 15" stroke="rgba(200,169,110,.1)" stroke-width="1.5" fill="none"/>
-          </svg>
-          <div class="card-top-content">
-            ${channels ? `<div class="card-channel-badges">${channels}</div>` : ''}
-            <div class="card-item-name">${item.name || 'Untitled'}</div>
-            <div class="card-item-brand">${item.brand || ''}</div>
-          </div>
-          <span class="card-status-badge ${statusCls[item.status]||'status-draft'}">${statusLabel[item.status]||'Draft'}</span>
-        </div>
-        <div class="card-accent-bar"></div>
-        <div class="card-body">
-          <div class="price-row">
-            <div style="display:flex;align-items:baseline;gap:10px">${priceDisplay}</div>
-            ${marginBadge}
-          </div>
-          <div class="meta-row">
-            ${item.category ? `<span class="meta-item">${item.category}</span>` : ''}
-            ${item.acquired ? `<span class="meta-item">Acq. ${fmtDate(item.acquired)}</span>` : ''}
-            <span class="meta-item ${item.receipt ? 'receipt-yes' : 'receipt-no'}">${item.receipt ? '✓ Receipt' : 'No receipt'}</span>
-          </div>
-          ${phSection}
-        </div>
-      </div>`;
+    const marginBadge = margin != null
+      ? '<span class="price-margin ' + (margin >= 0 ? 'margin-pos' : 'margin-neg') + '">' +
+        (margin >= 0 ? '+' : '') + fmt(margin) + (marginPct != null ? ' · ' + marginPct + '%' : '') + '</span>'
+      : '';
+
+    const phEntries = (item.priceHistory || []).slice(-3).map(function(ph, idx, arr) {
+      const prev = idx > 0 ? arr[idx-1].price : null;
+      const delta = prev != null
+        ? '<span class="ph-delta ' + (ph.price >= prev ? 'up' : 'down') + '">' +
+          (ph.price >= prev ? '▲' : '▼') + ' ' + fmt(Math.abs(ph.price - prev)) + '</span>'
+        : '';
+      return '<div class="ph-entry"><span class="ph-date">' + (fmtDate(ph.date)||ph.date) + '</span>' +
+             '<span class="ph-price">' + fmt(ph.price) + '</span>' + delta + '</div>';
+    }).join('');
+
+    const phSection = phEntries
+      ? '<div class="price-history-mini"><div class="ph-label">Price History</div>' +
+        '<div class="ph-entries">' + phEntries + '</div></div>'
+      : '';
+
+    // Image strip
+    const imgs = item.images || [];
+    const imgStrip = imgs.length
+      ? '<div class="card-img-strip">' +
+        '<img class="card-img-main" src="' + imgs[0] + '" alt="" onerror="this.parentElement.style.display=\'none\'">' +
+        (imgs.length > 1 ? '<span class="card-img-count">\uD83D\uDCF7 ' + imgs.length + '</span>' : '') +
+        '</div>'
+      : '';
+
+    const topStyle = imgs.length ? ' style="border-radius:0"' : '';
+
+    return '<div class="item-card" onclick="openModal(\'' + item.id + '\')">' +
+      imgStrip +
+      '<div class="card-top"' + topStyle + '>' +
+      '<svg class="card-top-bg" viewBox="0 0 280 80" preserveAspectRatio="xMidYMid slice">' +
+      '<path d="M-10 50 C40 20 100 45 180 18 C230 4 265 22 300 15" stroke="rgba(200,169,110,.1)" stroke-width="1.5" fill="none"/>' +
+      '</svg>' +
+      '<div class="card-top-content">' +
+      (channels ? '<div class="card-channel-badges">' + channels + '</div>' : '') +
+      '<div class="card-item-name">' + (item.name || 'Untitled') + '</div>' +
+      '<div class="card-item-brand">' + (item.brand || '') + '</div>' +
+      '</div>' +
+      '<span class="card-status-badge ' + (statusCls[item.status]||'status-draft') + '">' + (statusLabel[item.status]||'Draft') + '</span>' +
+      '</div>' +
+      '<div class="card-accent-bar"></div>' +
+      '<div class="card-body">' +
+      '<div class="price-row">' +
+      '<div style="display:flex;align-items:baseline;gap:10px">' + priceDisplay + '</div>' +
+      marginBadge +
+      '</div>' +
+      '<div class="meta-row">' +
+      (item.category ? '<span class="meta-item">' + item.category + '</span>' : '') +
+      (item.acquired ? '<span class="meta-item">Acq. ' + fmtDate(item.acquired) + '</span>' : '') +
+      '<span class="meta-item ' + (item.receipt ? 'receipt-yes' : 'receipt-no') + '">' +
+      (item.receipt ? '✓ Receipt' : 'No receipt') + '</span>' +
+      '</div>' +
+      phSection +
+      '</div>' +
+      '</div>';
   }).join('');
-}
-
-// ── MODAL ──────────────────────────────────────────────────────────────────
-function openModal(id) {
-  editingId = id || null;
-  pendingPriceHistory = [];
-
-  const overlay  = document.getElementById('modal-overlay');
-  const title    = document.getElementById('modal-title');
-  const delBtn   = document.getElementById('btn-delete');
-  const soldWrap = document.getElementById('f-sold-price-wrap');
-
-  if (id) {
-    const item = items.find(i => i.id === id);
-    if (!item) return;
-    title.innerHTML = 'Edit <em>Item</em>';
-    delBtn.style.display = '';
-    document.getElementById('f-name').value       = item.name || '';
-    document.getElementById('f-brand').value      = item.brand || '';
-    document.getElementById('f-category').value   = item.category || '';
-    document.getElementById('f-notes').value      = item.notes || '';
-    document.getElementById('f-cost').value       = item.cost || '';
-    document.getElementById('f-price').value      = item.price || '';
-    document.getElementById('f-sold-price').value = item.soldPrice || '';
-    document.getElementById('f-status').value     = item.status || 'draft';
-    document.getElementById('f-acquired').value   = item.acquired || '';
-    document.getElementById('f-receipt').checked  = !!item.receipt;
-    document.querySelectorAll('[name="channel"]').forEach(cb => {
-      cb.checked = (item.channels || []).includes(cb.value);
-    });
-    pendingPriceHistory = JSON.parse(JSON.stringify(item.priceHistory || []));
-    soldWrap.style.display = item.status === 'sold' ? '' : 'none';
-  } else {
-    title.innerHTML = 'Add <em>Item</em>';
-    delBtn.style.display = 'none';
-    ['f-name','f-brand','f-category','f-notes','f-cost','f-price','f-sold-price'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    document.getElementById('f-status').value  = 'draft';
-    document.getElementById('f-acquired').value = '';
-    document.getElementById('f-receipt').checked = false;
-    document.querySelectorAll('[name="channel"]').forEach(cb => cb.checked = false);
-    soldWrap.style.display = 'none';
-  }
-
-  renderPriceHistory();
-  overlay.classList.add('open');
-  setTimeout(() => document.getElementById('f-name').focus(), 100);
 }
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   editingId = null;
   pendingPriceHistory = [];
+  pendingImages = [];
 }
 
 function saveItem() {
@@ -1186,6 +1242,7 @@ function saveItem() {
     acquired:     document.getElementById('f-acquired').value,
     receipt:      document.getElementById('f-receipt').checked,
     priceHistory: pendingPriceHistory,
+    images: pendingImages,
   };
 
   if (editingId) {
@@ -1266,6 +1323,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-save').addEventListener('click', saveItem);
   document.getElementById('btn-delete').addEventListener('click', deleteItem);
   document.getElementById('ph-add-btn').addEventListener('click', addPriceRow);
+  document.getElementById('img-add-btn').addEventListener('click', addImageUrl);
+  document.getElementById('img-url-input').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addImageUrl(); } });
   document.getElementById('f-status').addEventListener('change', onStatusChange);
   document.getElementById('modal-overlay').addEventListener('click', e => {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
@@ -1282,6 +1341,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (configOk()) syncFromGitHub();
 });
+
+
+// ── IMAGE MANAGEMENT ───────────────────────────────────────────────────────
+function addImageUrl() {
+  const input = document.getElementById('img-url-input');
+  const url = input.value.trim();
+  if (!url) { input.focus(); return; }
+  pendingImages.push(url);
+  input.value = '';
+  renderImageList();
+}
+
+function removeImageUrl(idx) {
+  pendingImages.splice(idx, 1);
+  renderImageList();
+}
+
+function renderImageList() {
+  const list = document.getElementById('img-list');
+  if (!pendingImages.length) { list.innerHTML = ''; return; }
+  list.innerHTML = pendingImages.map((url, i) => `
+    <div class="img-item">
+      <img class="img-thumb" src="${url}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="">
+      <div class="img-thumb-placeholder" style="display:none">🖼</div>
+      <span class="img-url">${url}</span>
+      <button class="img-del" onclick="removeImageUrl(${i})">×</button>
+    </div>`).join('');
+}
+
+// Image viewer in card (mini lightbox via modal re-use)
+let viewerImages = [];
+let viewerIndex  = 0;
+
+function openImageViewer(itemId, startIdx) {
+  const item = items.find(i => i.id === itemId);
+  if (!item || !item.images || !item.images.length) return;
+  viewerImages = item.images;
+  viewerIndex  = startIdx || 0;
+  renderViewer();
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function renderViewer() {
+  // swap modal content temporarily — we won't do this,
+  // instead we show images inline in the card click (openModal handles it)
+}
 
 // ── KEYBOARD + SAFETY GUARDS ──
 document.addEventListener('keydown', e => {
