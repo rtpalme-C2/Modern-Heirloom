@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Heirloom</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300&display=swap" rel="stylesheet">
+<title>Modern Heirloom — Luxury Resale Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;1,200;1,300;1,400;1,500&display=swap" rel="stylesheet">
 
 <!-- PWA / iOS home screen -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,32 +17,31 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
-  --near-black:#1A1814;
-  --charcoal:#2E2A26;
-  --champagne:#C8A96E;
-  --parchment:#E8DCC8;
-  --cotton:#F2EDE8;
-  --crisp:#FAFAF8;
-  --text-main:#1A1814;
-  --text-mid:#6A6458;
-  --text-dim:#9A9488;
-  --text-faint:#C4BEB5;
-  --surface:#FAFAF8;
-  --card-bg:#FFFFFF;
-  --border:rgba(26,24,20,.1);
+  --mh-dark:    #1C0810;
+  --mh-mid:     #4A1428;
+  --mh-accent:  #8B2040;
+  --mh-rose:    #D4617A;
+  --mh-petal:   #F5F2EC;
+  --mh-petal-dim:#EAE6DF;
+  --text-main:  #1C0810;
+  --text-mid:   #6A3848;
+  --text-dim:   #9A7880;
+  --text-faint: #C4A8B0;
+  --card-bg:    #FFFFFF;
+  --border:     rgba(28,8,16,.1);
 }
 
 html{font-size:16px;-webkit-text-size-adjust:100%}
 body{
   font-family:'Plus Jakarta Sans',sans-serif;
-  background:var(--cotton);
+  background:var(--mh-petal);
   color:var(--text-main);
   min-height:100vh;
 }
 
 /* ── HEADER ── */
 header{
-  background:var(--near-black);
+  background:var(--mh-dark);
   padding:40px 40px 36px;
   position:relative;
   overflow:hidden;
@@ -52,30 +51,30 @@ header{
 .hdr-mark{flex-shrink:0;margin-top:4px}
 .hdr-text{}
 .hdr-eyebrow{
-  font-size:7px;letter-spacing:.24em;text-transform:uppercase;
-  color:#C8A96E;font-weight:500;margin-bottom:12px;opacity:.9;
+  font-size:.44rem;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--mh-rose);font-weight:500;margin-bottom:12px;opacity:.9;
 }
 .hdr-name{
   font-size:clamp(1.6rem,3vw,2.2rem);
-  font-weight:500;color:#F2EDE8;
+  font-weight:500;color:var(--mh-petal);
   letter-spacing:-.02em;line-height:1;
   margin-bottom:6px;
 }
-.hdr-name em{font-style:italic;font-weight:200;color:#C8A96E}
+.hdr-name em{font-style:italic;font-weight:200;color:var(--mh-rose)}
 .hdr-tagline{
-  font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;
+  font-size:.47rem;letter-spacing:.16em;text-transform:uppercase;
   color:rgba(242,237,232,.35);font-weight:300;margin-top:10px;
 }
 .hdr-accent{
   position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,#C8A96E 20%,#C8A96E 80%,transparent);
+  background:linear-gradient(90deg,transparent,var(--mh-rose) 20%,var(--mh-rose) 80%,transparent);
   opacity:.6;
 }
 
 /* ── SYNC BAR ── */
 .sync-bar{
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
-  padding:10px 40px;background:#f8f7f4;border-bottom:1px solid rgba(200,169,110,.15);
+  padding:8px 40px;background:var(--mh-mid);border-bottom:1px solid rgba(212,97,122,.15);
   font-size:.74rem;
 }
 .sync-status{display:flex;align-items:center;gap:8px;color:#888}
@@ -98,12 +97,12 @@ header{
 /* ── CONFIG NOTICE ── */
 .config-notice{
   margin:16px 40px;padding:14px 18px;
-  background:#fdf8ed;border:1.5px solid rgba(200,169,110,.4);border-radius:12px;
-  font-size:.8rem;line-height:1.6;color:#5a4800;
+  background:#fdf0f2;border:1.5px solid rgba(212,97,122,.35);border-radius:4px;
+  font-size:.8rem;line-height:1.6;color:#5a1828;
 }
 .config-notice strong{display:block;margin-bottom:4px;font-size:.85rem}
 .config-notice code{
-  background:rgba(200,169,110,.15);padding:1px 6px;border-radius:4px;
+  background:rgba(212,97,122,.12);padding:1px 6px;border-radius:4px;
   font-family:monospace;font-size:.78rem;
 }
 
@@ -117,7 +116,7 @@ header{
   position:relative;
 }
 .search-wrap input{
-  width:100%;font-family:inherit;font-size:13px;
+  width:100%;font-family:inherit;font-size:.8rem;
   background:#fff;border:1px solid rgba(26,24,20,.12);
   color:var(--text-main);padding:9px 14px 9px 36px;
   border-radius:8px;outline:none;
@@ -130,7 +129,7 @@ header{
   color:var(--text-dim);pointer-events:none;
 }
 .filter-select{
-  font-family:inherit;font-size:12px;letter-spacing:.04em;
+  font-family:inherit;font-size:.74rem;letter-spacing:.04em;
   background:#fff;border:1px solid rgba(26,24,20,.12);
   color:var(--text-mid);padding:9px 14px;
   border-radius:8px;outline:none;cursor:pointer;
@@ -138,7 +137,7 @@ header{
 }
 .filter-select:focus{border-color:rgba(200,169,110,.5)}
 .btn-add{
-  font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:inherit;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;
   background:var(--near-black);color:#C8A96E;
   border:1px solid rgba(200,169,110,.3);
@@ -154,11 +153,11 @@ header{
 }
 .stat-pill{
   background:#fff;border:1px solid var(--border);
-  border-radius:10px;padding:12px 18px;
+  border-radius:8px;padding:12px 18px;
   display:flex;flex-direction:column;gap:3px;
   min-width:100px;
 }
-.stat-label{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);font-weight:500}
+.stat-label{font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);font-weight:500}
 .stat-value{font-size:1.2rem;font-weight:500;color:var(--text-main);letter-spacing:-.02em}
 .stat-value.gold{color:var(--champagne)}
 
@@ -174,8 +173,8 @@ header{
   color:var(--text-dim);
 }
 .empty-state .es-mark{margin:0 auto 24px;opacity:.25}
-.empty-state p{font-size:13px;letter-spacing:.04em;margin-bottom:8px}
-.empty-state span{font-size:11px;color:var(--text-faint)}
+.empty-state p{font-size:.8rem;letter-spacing:.04em;margin-bottom:8px}
+.empty-state span{font-size:.68rem;color:var(--text-faint)}
 
 /* ── ITEM CARD ── */
 .item-card{
@@ -203,20 +202,20 @@ header{
 .card-top-content{position:relative;z-index:1;flex:1;min-width:0}
 .card-channel-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
 .channel-badge{
-  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;
   font-weight:500;padding:3px 8px;border-radius:20px;
   background:rgba(200,169,110,.15);color:rgba(200,169,110,.9);
   border:1px solid rgba(200,169,110,.2);
 }
 .card-item-name{
-  font-size:14px;font-weight:500;color:#F2EDE8;
+  font-size:.88rem;font-weight:500;color:#F2EDE8;
   letter-spacing:-.01em;line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.card-item-brand{font-size:11px;color:rgba(242,237,232,.4);font-weight:300;margin-top:2px}
+.card-item-brand{font-size:.68rem;color:rgba(242,237,232,.4);font-weight:300;margin-top:2px}
 .card-status-badge{
   flex-shrink:0;position:relative;z-index:1;
-  font-size:8px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
+  font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;font-weight:500;
   padding:3px 8px;border-radius:20px;
   margin-top:2px;
 }
@@ -234,16 +233,16 @@ header{
   font-size:1.35rem;font-weight:500;color:var(--text-main);
   letter-spacing:-.02em;
 }
-.price-cost{font-size:11px;color:var(--text-dim);font-weight:300}
+.price-cost{font-size:.68rem;color:var(--text-dim);font-weight:300}
 .price-margin{
-  font-size:10px;font-weight:500;
+  font-size:.62rem;font-weight:500;
   padding:2px 7px;border-radius:20px;
 }
 .margin-pos{background:rgba(122,154,106,.12);color:#7A9A6A}
 .margin-neg{background:rgba(196,106,90,.12);color:#C46A5A}
 
 .meta-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.meta-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim)}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:.62rem;color:var(--text-dim)}
 .meta-item svg{opacity:.6}
 .receipt-yes{color:#7A9A6A}
 .receipt-no{color:var(--text-faint)}
@@ -252,12 +251,12 @@ header{
   border-top:1px solid var(--border);
   padding-top:10px;
 }
-.ph-label{font-size:8px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);font-weight:500;margin-bottom:6px}
+.ph-label{font-size:.5rem;letter-spacing:.16em;text-transform:uppercase;color:var(--text-faint);font-weight:500;margin-bottom:6px}
 .ph-entries{display:flex;flex-direction:column;gap:3px}
-.ph-entry{display:flex;justify-content:space-between;align-items:center;font-size:10px}
+.ph-entry{display:flex;justify-content:space-between;align-items:center;font-size:.62rem}
 .ph-date{color:var(--text-faint)}
 .ph-price{font-weight:500;color:var(--text-mid)}
-.ph-delta{font-size:9px}
+.ph-delta{font-size:.56rem}
 .ph-delta.up{color:#7A9A6A}
 .ph-delta.down{color:#C46A5A}
 
@@ -267,7 +266,7 @@ header{
   display:flex;gap:8px;
 }
 .card-btn{
-  flex:1;font-family:inherit;font-size:10px;letter-spacing:.08em;
+  flex:1;font-family:inherit;font-size:.62rem;letter-spacing:.08em;
   text-transform:uppercase;font-weight:500;
   background:none;border:1px solid var(--border);
   color:var(--text-dim);padding:7px;border-radius:8px;cursor:pointer;
@@ -301,11 +300,11 @@ header{
 }
 .modal-header-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .modal-header-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-size:16px;font-weight:500;color:#F2EDE8;letter-spacing:-.01em}
-.modal-title em{font-style:italic;font-weight:200;color:#C8A96E}
+.modal-title{font-size:1rem;font-weight:500;color:#F2EDE8;letter-spacing:-.01em}
+.modal-title em{font-style:italic;font-weight:200;color:var(--mh-rose)}
 .modal-close{
   background:none;border:none;color:rgba(242,237,232,.4);
-  cursor:pointer;font-size:20px;line-height:1;padding:4px;
+  cursor:pointer;font-size:1.25rem;line-height:1;padding:4px;
   transition:color .15s;
 }
 .modal-close:hover{color:#F2EDE8}
@@ -314,17 +313,17 @@ header{
 .modal-body{padding:24px 28px 28px}
 .form-section{margin-bottom:24px}
 .form-section-label{
-  font-size:8px;letter-spacing:.2em;text-transform:uppercase;
+  font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;
   font-weight:500;color:var(--champagne);margin-bottom:12px;
 }
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-grid.full{grid-template-columns:1fr}
 .form-field{display:flex;flex-direction:column;gap:5px}
-.form-field label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--text-dim)}
+.form-field label{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;color:var(--text-dim)}
 .form-field input,
 .form-field select,
 .form-field textarea{
-  font-family:inherit;font-size:13px;
+  font-family:inherit;font-size:.8rem;
   background:#fff;border:1px solid rgba(26,24,20,.14);
   color:var(--text-main);padding:9px 12px;
   border-radius:8px;outline:none;
@@ -339,7 +338,7 @@ header{
 .channel-checkboxes{display:flex;flex-wrap:wrap;gap:8px}
 .channel-check{
   display:flex;align-items:center;gap:6px;
-  font-size:11px;color:var(--text-mid);cursor:pointer;
+  font-size:.68rem;color:var(--text-mid);cursor:pointer;
   padding:7px 12px;border-radius:8px;
   border:1px solid rgba(26,24,20,.12);background:#fff;
   transition:all .15s;
@@ -356,7 +355,7 @@ header{
   display:flex;align-items:center;gap:10px;cursor:pointer;
   padding:10px 14px;border-radius:8px;
   border:1px solid rgba(26,24,20,.12);background:#fff;
-  font-size:12px;color:var(--text-mid);
+  font-size:.74rem;color:var(--text-mid);
   transition:all .15s;
   -webkit-user-select:none;user-select:none;
 }
@@ -365,7 +364,7 @@ header{
 }
 .receipt-toggle input{display:none}
 .toggle-track{
-  width:32px;height:18px;border-radius:9px;
+  width:32px;height:18px;border-radius:8px;
   background:rgba(26,24,20,.15);position:relative;transition:background .2s;flex-shrink:0;
 }
 .receipt-toggle:has(input:checked) .toggle-track{background:#7A9A6A}
@@ -383,15 +382,15 @@ header{
 .ph-history-item{
   display:flex;align-items:center;justify-content:space-between;
   padding:8px 12px;background:#fff;border-radius:8px;
-  border:1px solid var(--border);font-size:11px;
+  border:1px solid var(--border);font-size:.68rem;
 }
 .ph-history-item .ph-info{display:flex;gap:12px;align-items:center}
 .ph-history-item .ph-del{
   background:none;border:none;color:var(--text-faint);cursor:pointer;
-  font-size:14px;line-height:1;transition:color .15s;padding:2px 4px;
+  font-size:.88rem;line-height:1;transition:color .15s;padding:2px 4px;
 }
 .ph-history-item .ph-del:hover{color:#C46A5A}
-.ph-change{font-size:10px;font-weight:500;padding:2px 6px;border-radius:20px}
+.ph-change{font-size:.62rem;font-weight:500;padding:2px 6px;border-radius:20px}
 .ph-change.raise{background:rgba(122,154,106,.12);color:#7A9A6A}
 .ph-change.lower{background:rgba(196,106,90,.12);color:#C46A5A}
 .ph-change.initial{background:rgba(200,169,110,.12);color:#C8A96E}
@@ -404,20 +403,20 @@ header{
   border-radius:0 0 16px 16px;
 }
 .btn-cancel{
-  font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:inherit;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;background:none;border:1px solid var(--border);
   color:var(--text-dim);padding:9px 18px;border-radius:20px;cursor:pointer;transition:all .15s;
 }
 .btn-cancel:hover{border-color:var(--text-dim);color:var(--text-main)}
 .btn-save{
-  font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:inherit;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;background:var(--near-black);color:#C8A96E;
   border:1px solid rgba(200,169,110,.3);
   padding:9px 24px;border-radius:20px;cursor:pointer;transition:all .15s;
 }
 .btn-save:hover{background:var(--charcoal);border-color:rgba(200,169,110,.6)}
 .btn-danger{
-  font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-family:inherit;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;background:none;border:1px solid rgba(196,106,90,.3);
   color:#C46A5A;padding:9px 18px;border-radius:20px;cursor:pointer;transition:all .15s;
   margin-right:auto;
@@ -428,8 +427,8 @@ header{
 .toast{
   position:fixed;bottom:24px;right:24px;z-index:200;
   background:var(--near-black);color:#F2EDE8;
-  font-size:12px;letter-spacing:.04em;
-  padding:12px 18px;border-radius:10px;
+  font-size:.74rem;letter-spacing:.04em;
+  padding:12px 18px;border-radius:8px;
   border-left:3px solid #C8A96E;
   transform:translateY(60px);opacity:0;
   transition:transform .25s ease,opacity .25s ease;
@@ -464,8 +463,52 @@ header{
   .form-grid{grid-template-columns:1fr}
   .modal-body{padding:16px}
   .modal-footer{padding:10px 16px}
-  .btn-add{padding:8px 14px;font-size:10px}
+  .btn-add{padding:8px 14px;font-size:.62rem}
 }
+
+/* ── PAT MODAL ── */
+.pat-modal-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(28,8,16,.55);
+  z-index: 2000; align-items: center; justify-content: center; padding: 1rem;
+}
+.pat-modal-backdrop.open { display: flex; }
+.pat-modal {
+  background: var(--mh-petal); border-top: 4px solid var(--mh-rose); border-radius: 16px;
+  padding: 2rem; width: 100%; max-width: 460px;
+  box-shadow: 0 16px 48px rgba(28,8,16,.28); animation: slideUp .2s ease;
+}
+@keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+.pat-modal h2 { font-size: 1.2rem; font-weight: 500; color: var(--mh-dark); margin-bottom: .5rem; }
+.pat-modal p { font-size: .79rem; color: #666; line-height: 1.6; margin-bottom: 1rem; }
+.pat-modal p code { background: rgba(212,97,122,.1); padding: 1px 5px; border-radius: 12px; font-family: monospace; font-size: .76rem; }
+.pat-modal strong { color: var(--mh-dark); }
+.pat-field label {
+  display: block; font-size: .63rem; text-transform: uppercase;
+  letter-spacing: .12em; color: #aaa; margin-bottom: .3rem;
+}
+.pat-field input {
+  width: 100%; padding: 8px 12px; border: 1.5px solid var(--mh-petal-dim);
+  border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .82rem; color: var(--mh-dark); background: white;
+  outline: none; transition: border-color .18s; margin-bottom: 1rem;
+}
+.pat-field input:focus { border-color: var(--mh-rose); }
+.pat-actions { display: flex; gap: .75rem; }
+.btn-pat-cancel {
+  flex: 1; padding: 8px; border: 1.5px solid var(--mh-petal-dim); border-radius: 8px;
+  background: white; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: .74rem; letter-spacing: .08em; text-transform: uppercase;
+  cursor: pointer; color: #aaa; transition: all .15s;
+}
+.btn-pat-cancel:hover { border-color: var(--mh-accent); color: var(--mh-accent); }
+.btn-pat-save {
+  flex: 2; padding: 8px; border: none; border-radius: 8px;
+  background: var(--mh-dark); color: var(--mh-petal);
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: .74rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .15s;
+}
+.btn-pat-save:hover { background: var(--mh-mid); }
 </style>
 </head>
 <body>
@@ -480,23 +523,29 @@ header{
   <div class="hdr-accent"></div>
   <div class="hdr-inner">
     <div class="hdr-mark">
-      <svg width="80" height="52" viewBox="0 0 56 36" fill="none">
-        <!-- oval cartouche -->
-        <ellipse cx="28" cy="18" rx="26" ry="16" stroke="#C8A96E" stroke-width="1.2" fill="none" opacity=".88"/>
-        <ellipse cx="28" cy="18" rx="21.5" ry="11.5" stroke="#C8A96E" stroke-width=".55" fill="none" opacity=".35"/>
-        <!-- key: 30deg tilt, scaled to fit inside oval -->
-        <g transform="translate(28,17.67) rotate(30) scale(0.033)">
-          <circle cx="0" cy="-210" r="112" fill="#C8A96E"/>
-          <circle cx="0" cy="-210" r="56" fill="#1A1814"/>
-          <rect x="-26" y="-100" width="52" height="32" fill="#C8A96E"/>
-          <rect x="-24" y="-72" width="48" height="504" rx="24" fill="#C8A96E"/>
-          <rect x="-42" y="-46" width="84" height="42" rx="21" fill="#C8A96E"/>
-          <rect x="-42" y="10" width="84" height="42" rx="21" fill="#C8A96E"/>
-          <rect x="-42" y="148" width="84" height="42" rx="21" fill="#C8A96E"/>
-          <rect x="-42" y="204" width="84" height="42" rx="21" fill="#C8A96E"/>
-          <rect x="-80" y="252" width="104" height="90" rx="14" fill="#C8A96E"/>
-          <rect x="-80" y="252" width="44" height="44" rx="10" fill="#1A1814"/>
-        </g>
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <!-- icon background — slightly lighter than header -->
+        <rect width="56" height="56" rx="12" fill="#3D0F20"/>
+        <!-- handle shadow (dark, behind) -->
+        <path d="M16,28 C16,8 20,4 28,4 C36,4 40,8 40,28" fill="none" stroke="rgba(0,0,0,.6)" stroke-width="5" stroke-linecap="round"/>
+        <!-- handle (visible mid-tone) -->
+        <path d="M15,27 C15,7 20,3 28,3 C36,3 41,7 41,27" fill="none" stroke="#8B2040" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- handle highlight (top arc, rose) -->
+        <path d="M15,27 C15,7 20,3 28,3 C36,3 41,7 41,27" fill="none" stroke="#D4617A" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+        <!-- bag body shadow -->
+        <rect x="6" y="28" width="44" height="24" rx="5" fill="rgba(0,0,0,.5)"/>
+        <!-- bag body -->
+        <rect x="5" y="27" width="44" height="24" rx="5" fill="#6B1E38"/>
+        <!-- flap -->
+        <rect x="5" y="27" width="44" height="10" rx="5" fill="#4A1428"/>
+        <rect x="5" y="34" width="44" height="3" fill="#4A1428"/>
+        <!-- clasp plate -->
+        <rect x="20" y="28.5" width="16" height="9" rx="3" fill="#8B2040"/>
+        <!-- toggle bar -->
+        <rect x="22" y="30.5" width="12" height="5" rx="2.5" fill="#D4617A"/>
+        <!-- center post -->
+        <circle cx="28" cy="33" r="1.8" fill="#8B2040"/>
+        <circle cx="28" cy="33" r="0.8" fill="#D4617A"/>
       </svg>
     </div>
     <div class="hdr-text">
@@ -511,20 +560,22 @@ header{
 <div class="sync-bar">
   <div class="sync-status">
     <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-label">Not connected</span>
+    <span id="sync-label">Not connected to GitHub</span>
   </div>
   <div class="sync-actions">
-    <button class="btn-sync" id="btn-reset" onclick="resetLocalData()">Reset local data</button>
-    <button class="btn-sync" id="btn-signout" style="display:none" onclick="signOut()">Sign Out</button>
-    <button class="btn-sync primary" id="btn-signin" onclick="signIn()">Connect Google Drive</button>
+    <button class="btn-sync" onclick="resetLocalData()">Reset local data</button>
+    <button class="btn-sync" id="btn-disconnect" style="display:none" onclick="disconnectGitHub()">Disconnect</button>
+    <button class="btn-sync primary" id="btn-connect" onclick="openPATModal()">Connect GitHub</button>
   </div>
 </div>
 
 <!-- Config notice (hidden once keys are set) -->
 <div class="config-notice" id="config-notice">
-  <strong>⚠️ Setup required before Google Drive sync will work</strong>
-  Open this file in a text editor, find the <code>CONFIG</code> block near the top of the &lt;script&gt;, and replace
-  <code>YOUR_CLIENT_ID</code> and <code>YOUR_API_KEY</code> with your Google Cloud credentials from the Sashiko Craft GCP project.
+  <strong>⚠️ GitHub sync not configured</strong>
+  Tap <strong>Connect GitHub</strong> to enter your Personal Access Token.
+  The PAT needs <code>contents: write</code> permission on the
+  <code>rtpalme-C2/life-stuff-data</code> repo. It is stored only in your
+  browser's localStorage and never sent anywhere except the GitHub API.
 </div>
 
 <div class="stats-row" id="stats-row">
@@ -693,535 +744,101 @@ header{
 </div>
 
 <!-- ── TOAST ── -->
+
+<!-- ── PAT MODAL ── -->
+<div class="pat-modal-backdrop" id="pat-modal" onclick="patBackdropClose(event)">
+  <div class="pat-modal">
+    <h2>Connect GitHub Sync</h2>
+    <p>
+      Enter a GitHub Personal Access Token with <strong>Contents: Read &amp; write</strong>
+      permission scoped to the <code>rtpalme-C2/life-stuff-data</code> repository.
+      The token is stored only in this browser's localStorage.
+    </p>
+    <div class="pat-field">
+      <label>Personal Access Token</label>
+      <input type="password" id="pat-input" placeholder="github_pat_…" autocomplete="off">
+    </div>
+    <div class="pat-actions">
+      <button class="btn-pat-cancel" onclick="closePATModal()">Cancel</button>
+      <button class="btn-pat-save" onclick="savePAT()">Save &amp; Sync</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ─────────────────────────────────────────────
-//  CONFIG  — replace these two values
-// ─────────────────────────────────────────────
-const CONFIG = {
-  CLIENT_ID: '714545608495-qjrpqic57gi549kh9nfhpl53shlf78s8.apps.googleusercontent.com',
-  API_KEY:   'AIzaSyC0mBVjHBEc2KsBfRodnArfcqoO1BZ1qZI',
-};
-// ─────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════
+//  GITHUB SYNC CONFIG
+// ════════════════════════════════════════════════════════════════════
+const GH_OWNER    = 'rtpalme-C2';
+const GH_REPO     = 'life-stuff-data';
+const GH_FILE     = 'modern-heirloom-inventory.json';
+const GH_RAW_URL  = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_FILE}`;
+const GH_API_URL  = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
+const LS_PAT      = 'mh_gh_pat';
+const LS_SHA      = 'mh_gh_sha';
+const LS_DATA_KEY = 'mh-v1';
 
-// ═══════════════════════════════════════════════
-//  DATA
-// ═══════════════════════════════════════════════
+// ── Data version contract ─────────────────────────────────────────
+// Bump DATA_VERSION when schema changes make old data incompatible.
 const DATA_VERSION = 1;
-const LS_KEY = 'mh-v1';
 
-let items = [];
-let editingId = null;
-let pendingPriceHistory = [];
-let driveFileId = null;
 let saveTimer   = null;
-let gapiReady   = false;
-let gsiReady    = false;
+let pendingSave = false;
 
-function loadLocal(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      items = parsed.items || [];
-    }
-  }catch(e){ items = []; }
-}
+// ════════════════════════════════════════════════════════════════════
+//  PAT / SHA HELPERS
+// ════════════════════════════════════════════════════════════════════
+function getPAT()  { return localStorage.getItem(LS_PAT) || ''; }
+function getSHA()  { return localStorage.getItem(LS_SHA) || ''; }
+function setSHA(s) { localStorage.setItem(LS_SHA, s); }
+function configOk(){ return !!getPAT(); }
 
-function saveLocal(){
-  localStorage.setItem(LS_KEY, JSON.stringify({version:DATA_VERSION, items}));
-}
-
-function newId(){
-  return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
-}
-
-// ═══════════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════════
-const statusLabels = {active:'Active',sold:'Sold',draft:'Draft',hold:'Hold'};
-const statusClasses = {active:'status-active',sold:'status-sold',draft:'status-draft',hold:'status-hold'};
-
-function formatMoney(n){
-  if(n == null || n === '') return '—';
-  return '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function margin(cost, price){
-  if(!cost || !price) return null;
-  return ((price - cost) / cost * 100).toFixed(0);
-}
-
-function renderStats(){
-  const el = document.getElementById('stats-row');
-  const active = items.filter(i=>i.status==='active').length;
-  const sold = items.filter(i=>i.status==='sold').length;
-  const totalCost = items.reduce((s,i)=>s+(parseFloat(i.cost)||0),0);
-  const totalListed = items.filter(i=>i.status==='active').reduce((s,i)=>s+(parseFloat(i.price)||0),0);
-  const soldRevenue = items.filter(i=>i.status==='sold').reduce((s,i)=>s+(parseFloat(i.soldPrice||i.price)||0),0);
-  const soldCost = items.filter(i=>i.status==='sold').reduce((s,i)=>s+(parseFloat(i.cost)||0),0);
-  const profit = soldRevenue - soldCost;
-
-  el.innerHTML = `
-    <div class="stat-pill">
-      <span class="stat-label">Total Items</span>
-      <span class="stat-value">${items.length}</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-label">Active</span>
-      <span class="stat-value">${active}</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-label">Sold</span>
-      <span class="stat-value gold">${sold}</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-label">Listed Value</span>
-      <span class="stat-value">${formatMoney(totalListed)}</span>
-    </div>
-    <div class="stat-pill">
-      <span class="stat-label">Total Invested</span>
-      <span class="stat-value">${formatMoney(totalCost)}</span>
-    </div>
-    ${sold > 0 ? `<div class="stat-pill">
-      <span class="stat-label">Realized Profit</span>
-      <span class="stat-value ${profit>=0?'gold':''}">${formatMoney(profit)}</span>
-    </div>` : ''}
-  `;
-}
-
-function filteredItems(){
-  const q = document.getElementById('search-input').value.toLowerCase();
-  const st = document.getElementById('filter-status').value;
-  const ch = document.getElementById('filter-channel').value;
-  return items.filter(item=>{
-    if(q && !(item.name||'').toLowerCase().includes(q) && !(item.brand||'').toLowerCase().includes(q)) return false;
-    if(st && item.status !== st) return false;
-    if(ch && !(item.channels||[]).includes(ch)) return false;
-    return true;
-  });
-}
-
-function renderItems(){
-  const grid = document.getElementById('items-grid');
-  const list = filteredItems();
-  if(list.length === 0){
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
-      <div class="es-mark">
-        <svg width="80" height="52" viewBox="0 0 56 36" fill="none">
-          <ellipse cx="28" cy="18" rx="26" ry="16" stroke="#1A1814" stroke-width="1.2" fill="none" opacity=".25"/>
-          <ellipse cx="28" cy="18" rx="21.5" ry="11.5" stroke="#1A1814" stroke-width=".55" fill="none" opacity=".15"/>
-          <g transform="translate(28,17.67) rotate(30) scale(0.033)">
-            <circle cx="0" cy="-210" r="112" fill="#1A1814" opacity=".25"/>
-            <circle cx="0" cy="-210" r="56" fill="#F2EDE8"/>
-            <rect x="-26" y="-100" width="52" height="32" fill="#1A1814" opacity=".25"/>
-            <rect x="-24" y="-72" width="48" height="504" rx="24" fill="#1A1814" opacity=".25"/>
-            <rect x="-42" y="-46" width="84" height="42" rx="21" fill="#1A1814" opacity=".25"/>
-            <rect x="-42" y="10" width="84" height="42" rx="21" fill="#1A1814" opacity=".25"/>
-            <rect x="-42" y="148" width="84" height="42" rx="21" fill="#1A1814" opacity=".25"/>
-            <rect x="-42" y="204" width="84" height="42" rx="21" fill="#1A1814" opacity=".25"/>
-            <rect x="-80" y="252" width="104" height="90" rx="14" fill="#1A1814" opacity=".25"/>
-            <rect x="-80" y="252" width="44" height="44" rx="10" fill="#F2EDE8"/>
-          </g>
-        </svg>
-      </div>
-      <p>${items.length === 0 ? 'No items yet' : 'No items match this filter'}</p>
-      <span>${items.length === 0 ? 'Add your first item to get started' : 'Try adjusting your search or filters'}</span>
-    </div>`;
-    return;
-  }
-
-  grid.innerHTML = list.map((item, idx) => {
-    const channels = (item.channels||[]).map(c=>`<span class="channel-badge">${c}</span>`).join('');
-    const m = margin(item.cost, item.price);
-    const marginHtml = m != null
-      ? `<span class="price-margin ${parseInt(m)>=0?'margin-pos':'margin-neg'}">${parseInt(m)>=0?'+':''}${m}%</span>`
-      : '';
-
-    // Last 3 price history entries
-    const ph = (item.priceHistory||[]).slice(-3).reverse();
-    const phHtml = ph.length > 0 ? `
-      <div class="price-history-mini">
-        <div class="ph-label">Price History</div>
-        <div class="ph-entries">
-          ${ph.map((p,i)=>{
-            const prev = ph[i+1];
-            let delta = '';
-            if(prev){
-              const diff = p.price - prev.price;
-              delta = `<span class="ph-delta ${diff>=0?'up':'down'}">${diff>=0?'▲':'▼'} ${formatMoney(Math.abs(diff))}</span>`;
-            }
-            return `<div class="ph-entry">
-              <span class="ph-date">${p.date}${p.note?' · '+p.note:''}</span>
-              <span style="display:flex;align-items:center;gap:6px">${delta}<span class="ph-price">${formatMoney(p.price)}</span></span>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>` : '';
-
-    const solvedPriceDisplay = item.status === 'sold' && item.soldPrice
-      ? `<span class="price-cost">sold ${formatMoney(item.soldPrice)}</span>`
-      : `<span class="price-cost">cost ${formatMoney(item.cost)}</span>`;
-
-    return `<div class="item-card" style="animation-delay:${idx*0.04}s">
-      <div class="card-top">
-        <svg class="card-top-bg" viewBox="0 0 320 88" preserveAspectRatio="xMidYMid slice">
-          <path d="M-10 70 C60 30 160 65 280 20 C330 5 360 30 390 22" stroke="rgba(200,169,110,.14)" stroke-width="1.5" fill="none"/>
-          <path d="M-10 45 C70 15 190 55 310 12" stroke="rgba(200,169,110,.07)" stroke-width="1" fill="none"/>
-        </svg>
-        <div class="card-top-content">
-          <div class="card-channel-badges">${channels || '<span class="channel-badge" style="opacity:.35">No channel</span>'}</div>
-          <div class="card-item-name">${item.name || 'Unnamed Item'}</div>
-          ${item.brand ? `<div class="card-item-brand">${item.brand}</div>` : ''}
-        </div>
-        <div class="card-status-badge ${statusClasses[item.status]||'status-draft'}">${statusLabels[item.status]||'Draft'}</div>
-      </div>
-      <div class="card-accent-bar"></div>
-      <div class="card-body">
-        <div class="price-row">
-          <div class="price-current">${formatMoney(item.price)}</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            ${solvedPriceDisplay}
-            ${marginHtml}
-          </div>
-        </div>
-        <div class="meta-row">
-          <div class="meta-item ${item.receipt ? 'receipt-yes' : 'receipt-no'}">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
-              <rect x=".75" y=".75" width="9.5" height="9.5" rx="1.5" stroke="currentColor" stroke-width="1.1"/>
-              ${item.receipt ? '<polyline points="2.5,5.5 4.5,7.5 8.5,3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>' : '<line x1="3" y1="3" x2="8" y2="8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="8" y1="3" x2="3" y2="8" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>'}
-            </svg>
-            ${item.receipt ? 'Receipt' : 'No receipt'}
-          </div>
-          ${item.acquired ? `<div class="meta-item">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x=".75" y="1.75" width="8.5" height="7.5" rx="1.2" stroke="currentColor" stroke-width="1"/><line x1="3" y1=".75" x2="3" y2="2.75" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="7" y1=".75" x2="7" y2="2.75" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
-            ${item.acquired}
-          </div>` : ''}
-          ${item.category ? `<div class="meta-item">${item.category}</div>` : ''}
-        </div>
-        ${phHtml}
-        <div class="card-actions">
-          <button class="card-btn primary" onclick="openEdit('${item.id}')">Edit</button>
-          ${item.status !== 'sold' ? `<button class="card-btn" onclick="quickStatus('${item.id}','sold')">Mark Sold</button>` : ''}
-          ${item.status === 'draft' ? `<button class="card-btn" onclick="quickStatus('${item.id}','active')">Activate</button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function render(){
-  renderStats();
-  renderItems();
-}
-
-// ═══════════════════════════════════════════════
-//  MODAL
-// ═══════════════════════════════════════════════
-function openAdd(){
-  editingId = null;
-  pendingPriceHistory = [];
-  document.getElementById('modal-title').innerHTML = 'Add <em>Item</em>';
-  document.getElementById('btn-delete').style.display = 'none';
-  document.getElementById('f-sold-price-wrap').style.display = 'none';
-  // Clear fields
-  ['f-name','f-brand','f-category','f-notes','f-cost','f-price','f-sold-price','f-acquired'].forEach(id=>{
-    document.getElementById(id).value = '';
-  });
-  document.getElementById('f-receipt').checked = false;
-  document.getElementById('f-status').value = 'active';
-  document.querySelectorAll('input[name="channel"]').forEach(cb=>cb.checked=false);
-  renderPhList();
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function openEdit(id){
-  const item = items.find(i=>i.id===id);
-  if(!item) return;
-  editingId = id;
-  pendingPriceHistory = JSON.parse(JSON.stringify(item.priceHistory||[]));
-  document.getElementById('modal-title').innerHTML = 'Edit <em>Item</em>';
-  document.getElementById('btn-delete').style.display = 'block';
-
-  document.getElementById('f-name').value = item.name||'';
-  document.getElementById('f-brand').value = item.brand||'';
-  document.getElementById('f-category').value = item.category||'';
-  document.getElementById('f-notes').value = item.notes||'';
-  document.getElementById('f-cost').value = item.cost||'';
-  document.getElementById('f-price').value = item.price||'';
-  document.getElementById('f-sold-price').value = item.soldPrice||'';
-  document.getElementById('f-acquired').value = item.acquired||'';
-  document.getElementById('f-receipt').checked = !!item.receipt;
-  document.getElementById('f-status').value = item.status||'active';
-  const soldWrap = document.getElementById('f-sold-price-wrap');
-  soldWrap.style.display = item.status === 'sold' ? '' : 'none';
-
-  document.querySelectorAll('input[name="channel"]').forEach(cb=>{
-    cb.checked = (item.channels||[]).includes(cb.value);
-  });
-  renderPhList();
-  document.getElementById('modal-overlay').classList.add('open');
-}
-
-function closeModal(){
-  document.getElementById('modal-overlay').classList.remove('open');
-  editingId = null;
-  pendingPriceHistory = [];
-}
-
-document.getElementById('f-status').addEventListener('change', function(){
-  document.getElementById('f-sold-price-wrap').style.display = this.value === 'sold' ? '' : 'none';
-});
-
-document.getElementById('modal-close').onclick = closeModal;
-document.getElementById('btn-cancel').onclick = closeModal;
-document.getElementById('modal-overlay').addEventListener('click', function(e){
-  if(e.target === this) closeModal();
-});
-
-document.getElementById('btn-save').onclick = function(){
-  const name = document.getElementById('f-name').value.trim();
-  if(!name){ showToast('Item name is required', true); return; }
-
-  const channels = [...document.querySelectorAll('input[name="channel"]:checked')].map(c=>c.value);
-
-  const itemData = {
-    id: editingId || newId(),
-    name,
-    brand: document.getElementById('f-brand').value.trim(),
-    category: document.getElementById('f-category').value.trim(),
-    notes: document.getElementById('f-notes').value.trim(),
-    cost: document.getElementById('f-cost').value || null,
-    price: document.getElementById('f-price').value || null,
-    soldPrice: document.getElementById('f-sold-price').value || null,
-    acquired: document.getElementById('f-acquired').value || null,
-    receipt: document.getElementById('f-receipt').checked,
-    status: document.getElementById('f-status').value,
-    channels,
-    priceHistory: pendingPriceHistory,
-    updatedAt: new Date().toISOString(),
-  };
-
-  if(editingId){
-    const idx = items.findIndex(i=>i.id===editingId);
-    items[idx] = itemData;
+function updateSetupBanner() {
+  const notice = document.getElementById('config-notice');
+  if (configOk()) {
+    notice.style.display = 'none';
+    document.getElementById('btn-connect').style.display    = 'none';
+    document.getElementById('btn-disconnect').style.display = '';
   } else {
-    itemData.createdAt = new Date().toISOString();
-    items.unshift(itemData);
-  }
-
-  scheduleSave();
-  closeModal();
-  render();
-  showToast(editingId ? 'Item updated' : 'Item added');
-};
-
-document.getElementById('btn-delete').onclick = function(){
-  if(!confirm('Delete this item? This cannot be undone.')) return;
-  items = items.filter(i=>i.id!==editingId);
-  scheduleSave();
-  closeModal();
-  render();
-  showToast('Item deleted');
-};
-
-function quickStatus(id, status){
-  const item = items.find(i=>i.id===id);
-  if(!item) return;
-  item.status = status;
-  item.updatedAt = new Date().toISOString();
-  scheduleSave();
-  render();
-  showToast(`Marked as ${statusLabels[status]}`);
-}
-
-// ═══════════════════════════════════════════════
-//  PRICE HISTORY
-// ═══════════════════════════════════════════════
-function renderPhList(){
-  const list = document.getElementById('ph-history-list');
-  if(!pendingPriceHistory.length){
-    list.innerHTML = '<div style="font-size:11px;color:var(--text-faint);padding:4px 0">No price history entries yet</div>';
-    return;
-  }
-  list.innerHTML = pendingPriceHistory.map((p,i)=>{
-    const prev = pendingPriceHistory[i-1];
-    let changeHtml = '<span class="ph-change initial">Initial</span>';
-    if(prev){
-      const diff = p.price - prev.price;
-      changeHtml = `<span class="ph-change ${diff>=0?'raise':'lower'}">${diff>=0?'↑ Raise':'↓ Lower'} ${formatMoney(Math.abs(diff))}</span>`;
-    }
-    return `<div class="ph-history-item">
-      <div class="ph-info">
-        <span style="font-weight:500">${formatMoney(p.price)}</span>
-        <span style="color:var(--text-dim)">${p.date}</span>
-        ${p.note?`<span style="color:var(--text-faint)">${p.note}</span>`:''}
-        ${changeHtml}
-      </div>
-      <button class="ph-del" onclick="removePh(${i})" title="Remove">×</button>
-    </div>`;
-  }).join('');
-}
-
-function removePh(i){
-  pendingPriceHistory.splice(i,1);
-  renderPhList();
-}
-
-document.getElementById('ph-add-btn').onclick = function(){
-  const priceInput = document.getElementById('ph-price-input');
-  const noteInput = document.getElementById('ph-note-input');
-  const val = parseFloat(priceInput.value);
-  if(!val || val <= 0){ showToast('Enter a valid price', true); return; }
-  pendingPriceHistory.push({
-    price: val,
-    note: noteInput.value.trim(),
-    date: new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-  });
-  priceInput.value = '';
-  noteInput.value = '';
-  renderPhList();
-};
-
-// ═══════════════════════════════════════════════
-//  GOOGLE DRIVE SYNC  — same pattern as Sashiko Craft
-// ═══════════════════════════════════════════════
-const DRIVE_FILENAME = 'modern-heirloom-inventory.json';
-const SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
-
-let tokenClient;
-
-// ── Check if config is filled in ──
-const configOk = CONFIG.CLIENT_ID !== 'YOUR_CLIENT_ID' && CONFIG.API_KEY !== 'YOUR_API_KEY';
-if (configOk) document.getElementById('config-notice').style.display = 'none';
-
-// ── GAPI loaded ──
-function gapiLoaded() {
-  gapi.load('client', async () => {
-    await gapi.client.init({ discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'] });
-    gapiReady = true;
-    maybeInitGSI();
-  });
-}
-
-function maybeInitGSI() {
-  if (!configOk) return;
-  if (typeof google === 'undefined' || !google.accounts) {
-    setTimeout(maybeInitGSI, 250); return;
-  }
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CONFIG.CLIENT_ID,
-    scope: SCOPES,
-    callback: async (resp) => {
-      if (resp.error) { setSyncStatus('error', 'Auth error: ' + resp.error); return; }
-      setSyncStatus('saving', 'Signed in — loading data\u2026');
-      await findOrCreateFile();
-      await loadFromDrive();
-    },
-  });
-  gsiReady = true;
-  // Auto-restore session if token exists in sessionStorage
-  const tok = sessionStorage.getItem('mh_drive_token');
-  if (tok) {
-    gapi.client.setToken(JSON.parse(tok));
-    findOrCreateFile().then(loadFromDrive);
+    notice.style.display = '';
+    document.getElementById('btn-connect').style.display    = '';
+    document.getElementById('btn-disconnect').style.display = 'none';
   }
 }
 
-function signIn() {
-  if (!configOk) { alert('Please add your Google Cloud credentials to the CONFIG block first.'); return; }
-  if (!gapiReady || !gsiReady) { alert('Google APIs still loading — please try again in a moment.'); return; }
-  tokenClient.requestAccessToken({ prompt: '' });
+// ════════════════════════════════════════════════════════════════════
+//  PAT MODAL
+// ════════════════════════════════════════════════════════════════════
+function openPATModal() {
+  document.getElementById('pat-input').value = getPAT();
+  document.getElementById('pat-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pat-input').focus(), 50);
+}
+function closePATModal() { document.getElementById('pat-modal').classList.remove('open'); }
+function patBackdropClose(e) { if (e.target === document.getElementById('pat-modal')) closePATModal(); }
+
+async function savePAT() {
+  const val = document.getElementById('pat-input').value.trim();
+  if (!val) { document.getElementById('pat-input').focus(); return; }
+  localStorage.setItem(LS_PAT, val);
+  closePATModal();
+  updateSetupBanner();
+  await syncFromGitHub();
 }
 
-function signOut() {
-  const token = gapi.client.getToken();
-  if (token) google.accounts.oauth2.revoke(token.access_token, ()=>{});
-  gapi.client.setToken(null);
-  sessionStorage.removeItem('mh_drive_token');
-  driveFileId = null;
-  setSyncStatus('disconnected', 'Not connected');
-  document.getElementById('btn-signin').style.display = '';
-  document.getElementById('btn-signout').style.display = 'none';
+function disconnectGitHub() {
+  if (!confirm('Remove GitHub token from this browser?\n\nLocal data will be kept.')) return;
+  localStorage.removeItem(LS_PAT);
+  localStorage.removeItem(LS_SHA);
+  updateSetupBanner();
+  setSyncStatus('disconnected', 'Not connected to GitHub');
 }
 
-// ── Drive file management ──
-async function findOrCreateFile() {
-  const token = gapi.client.getToken();
-  const searchRes = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=name%3D'${DRIVE_FILENAME}'%20and%20trashed%3Dfalse&fields=files(id,name)`,
-    { headers: { 'Authorization': 'Bearer ' + token.access_token } }
-  );
-  const searchData = await searchRes.json();
-  const files = searchData.files || [];
-  if (files.length > 0) {
-    driveFileId = files[0].id;
-  } else {
-    const createRes = await fetch('https://www.googleapis.com/drive/v3/files?fields=id', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token.access_token,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: DRIVE_FILENAME, mimeType: 'application/json' }),
-    });
-    const createData = await createRes.json();
-    driveFileId = createData.id;
-  }
-  sessionStorage.setItem('mh_drive_token', JSON.stringify(gapi.client.getToken()));
-  document.getElementById('btn-signin').style.display = 'none';
-  document.getElementById('btn-signout').style.display = '';
-}
-
-async function loadFromDrive() {
-  if (!driveFileId) return;
-  setSyncStatus('saving', 'Loading from Drive\u2026');
-  try {
-    const token = gapi.client.getToken();
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`, {
-      headers: { 'Authorization': 'Bearer ' + token.access_token }
-    });
-    if (!res.ok) throw new Error('fetch failed: ' + res.status);
-    const text = await res.text();
-    if (text && text.trim().startsWith('{')) {
-      const data = JSON.parse(text);
-      if (data.items && Array.isArray(data.items) && data.items.length > 0) {
-        items = data.items;
-        saveLocal();
-      }
-    }
-    setSyncStatus('connected', 'Synced with Google Drive');
-    render();
-  } catch(e) {
-    await saveToDrive();
-  }
-}
-
-async function saveToDrive() {
-  if (!driveFileId) return;
-  setSyncStatus('saving', 'Saving\u2026');
-  try {
-    const token = gapi.client.getToken();
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: { 'Authorization': 'Bearer ' + token.access_token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ version: DATA_VERSION, items }),
-    });
-    setSyncStatus('connected', 'Saved to Drive \u2014 ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}));
-    sessionStorage.setItem('mh_drive_token', JSON.stringify(gapi.client.getToken()));
-  } catch(e) {
-    setSyncStatus('error', 'Save failed \u2014 check connection');
-  }
-}
-
-function scheduleSave() {
-  saveLocal();
-  if (!driveFileId) return;
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToDrive, 1200);
-}
-
+// ════════════════════════════════════════════════════════════════════
+//  SYNC STATUS
+// ════════════════════════════════════════════════════════════════════
 function setSyncStatus(state, label) {
   const dot = document.getElementById('sync-dot');
   document.getElementById('sync-label').textContent = label;
@@ -1231,47 +848,137 @@ function setSyncStatus(state, label) {
   else if (state === 'error')  dot.classList.add('error');
 }
 
+// ════════════════════════════════════════════════════════════════════
+//  GITHUB SYNC FUNCTIONS
+// ════════════════════════════════════════════════════════════════════
+async function syncFromGitHub() {
+  setSyncStatus('saving', 'Loading from GitHub…');
+  try {
+    const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (text && text.trim().startsWith('{')) {
+      const parsed = JSON.parse(text);
+      const hasData = parsed && parsed._version === DATA_VERSION &&
+        Array.isArray(parsed.items) && parsed.items.length > 0;
+      if (hasData) {
+        items = parsed.items;
+        saveLocal();
+        render();
+        setSyncStatus('connected', 'Synced from GitHub · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+        await fetchSHA();
+        return;
+      }
+    }
+    setSyncStatus('saving', 'Pushing local data to GitHub…');
+    await saveToGitHub();
+  } catch(e) {
+    setSyncStatus('error', 'GitHub sync failed — working offline');
+    showToast('Could not reach GitHub. Changes saved locally.');
+  }
+}
+
+async function fetchSHA() {
+  try {
+    const res = await fetch(GH_API_URL, {
+      headers: { 'Authorization': 'Bearer ' + getPAT(), 'Accept': 'application/vnd.github+json' }
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.sha) setSHA(data.sha);
+  } catch(e) {}
+}
+
+async function saveToGitHub() {
+  if (!configOk()) return;
+  setSyncStatus('saving', 'Saving to GitHub…');
+  pendingSave = true;
+  try {
+    await fetchSHA();
+    const payload = { _version: DATA_VERSION, items };
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const body = { message: 'Modern Heirloom update · ' + new Date().toISOString().slice(0,10), content };
+    if (getSHA()) body.sha = getSHA();
+    const res = await fetch(GH_API_URL, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'Bearer ' + getPAT(),
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || 'HTTP ' + res.status); }
+    const result = await res.json();
+    if (result.content && result.content.sha) setSHA(result.content.sha);
+    pendingSave = false;
+    setSyncStatus('connected', 'Saved to GitHub · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
+  } catch(e) {
+    pendingSave = false;
+    setSyncStatus('error', 'Save failed — changes kept locally');
+    showToast('GitHub save failed: ' + e.message);
+  }
+}
+
+function persist() {
+  try { localStorage.setItem(LS_DATA_KEY, JSON.stringify({ _version: DATA_VERSION, items })); }
+  catch(e) {}
+}
+
+function scheduleSave() {
+  persist();
+  if (!configOk()) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToGitHub, 1200);
+}
+
 function resetLocalData() {
-  if (!confirm('Clear locally cached data and reload?\n\nIf connected to Google Drive your data will reload from Drive. Otherwise the app will start empty.')) return;
-  localStorage.removeItem(LS_KEY);
+  if (!confirm('Clear locally cached data and reload?\n\nYour GitHub token will be kept — only data and the cached SHA are cleared. If GitHub sync is configured, data will reload from GitHub. Otherwise the app will start empty.')) return;
+  localStorage.removeItem(LS_DATA_KEY);
+  localStorage.removeItem(LS_SHA);
   location.reload();
 }
 
-// ═══════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════
-let toastTimer;
-function showToast(msg, isErr=false){
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast' + (isErr?' err':'') + ' show';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>el.classList.remove('show'), 2800);
+// ════════════════════════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════════════════════════
+let items = [];
+let editingId = null;
+let pendingPriceHistory = [];
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LS_DATA_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed._version === DATA_VERSION) {
+        items = parsed.items || [];
+      } else if (parsed && parsed.items) {
+        items = parsed.items || [];
+      }
+    }
+  }catch(e){ items = []; }
 }
 
-// ═══════════════════════════════════════════════
-//  EVENTS
-// ═══════════════════════════════════════════════
-document.getElementById('btn-add').onclick = openAdd;
-document.getElementById('search-input').addEventListener('input', renderItems);
-document.getElementById('filter-status').addEventListener('change', renderItems);
-document.getElementById('filter-channel').addEventListener('change', renderItems);
+function saveLocal(){
+  localStorage.setItem(LS_DATA_KEY, JSON.stringify({_version: DATA_VERSION, items}));
+}
 
+function newId(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+
+</body>
+</html>
+// ── KEYBOARD + SAFETY GUARDS ──
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closeModal(); closePATModal(); }
+  if (e.key === 'Enter' && document.getElementById('pat-modal').classList.contains('open')) {
+    e.preventDefault(); savePAT();
+  }
 });
 
 window.addEventListener('beforeunload', e => {
-  if (saveTimer) { e.preventDefault(); e.returnValue = ''; }
+  if (saveTimer || pendingSave) { e.preventDefault(); e.returnValue = ''; }
 });
 
-// ── Init ──
-loadLocal();
-render();
-</script>
-
-<!-- Google APIs — same order as Sashiko Craft -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-<script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
-</body>
-</html>
