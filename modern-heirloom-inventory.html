@@ -968,6 +968,321 @@ function newId(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 }
 
+
+// ── APP STATE ──────────────────────────────────────────────────────────────
+let filterStatus = '';
+let filterChannel = '';
+let searchQuery = '';
+
+// ── CSS VAR FIXES ──────────────────────────────────────────────────────────
+document.documentElement.style.setProperty('--near-black', '#1C0810');
+document.documentElement.style.setProperty('--charcoal',   '#3A1020');
+document.documentElement.style.setProperty('--champagne',  '#C8A96E');
+document.documentElement.style.setProperty('--crisp',      '#FFFFFF');
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (n == null || n === '' || isNaN(n)) return '—';
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function fmtDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  return new Date(y, m - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function showToast(msg, isErr) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isErr ? ' err' : '') + ' show';
+  setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 3000);
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  renderStats();
+  renderGrid();
+}
+
+function renderStats() {
+  const active = items.filter(i => i.status === 'active');
+  const sold   = items.filter(i => i.status === 'sold');
+  const totalAsk  = active.reduce((s, i) => s + (Number(i.price) || 0), 0);
+  const totalSold = sold.reduce((s, i) => s + (Number(i.soldPrice) || 0), 0);
+  const totalCostSold = sold.reduce((s, i) => s + (Number(i.cost) || 0), 0);
+  const profit = totalSold - totalCostSold;
+
+  const row = document.getElementById('stats-row');
+  row.innerHTML = [
+    ['Items',        items.length],
+    ['Active',       active.length],
+    ['Sold',         sold.length],
+    ['Listed Value', fmt(totalAsk)],
+    ['Sold Revenue', fmt(totalSold)],
+    ['Net Profit',   fmt(profit)],
+  ].map(([label, val]) => `
+    <div class="stat-pill">
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${val}</div>
+    </div>`).join('');
+}
+
+function renderGrid() {
+  const grid = document.getElementById('items-grid');
+  const q = searchQuery.toLowerCase();
+  let list = items.filter(item => {
+    if (filterStatus && item.status !== filterStatus) return false;
+    if (filterChannel && !(item.channels || []).includes(filterChannel)) return false;
+    if (q) {
+      const hay = [item.name, item.brand, item.category, item.notes].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <svg class="es-mark" width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <rect width="48" height="48" rx="12" fill="rgba(28,8,16,.06)"/>
+          <path d="M14 24 C14 14 18 10 24 10 C30 10 34 14 34 24" stroke="rgba(28,8,16,.2)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <rect x="11" y="24" width="26" height="14" rx="4" fill="rgba(28,8,16,.08)"/>
+        </svg>
+        <p>${items.length === 0 ? 'No items yet' : 'No items match your filters'}</p>
+        <span>${items.length === 0 ? 'Tap + Add Item to get started' : 'Try adjusting your search or filters'}</span>
+      </div>`;
+    return;
+  }
+
+  const statusCls   = { active:'status-active', sold:'status-sold', draft:'status-draft', hold:'status-hold' };
+  const statusLabel = { active:'Active', sold:'Sold', draft:'Draft', hold:'Hold' };
+
+  grid.innerHTML = list.map(item => {
+    const price  = Number(item.price)  || 0;
+    const cost   = Number(item.cost)   || 0;
+    const margin = (price && cost) ? price - cost : null;
+    const marginPct = (margin != null && cost) ? Math.round(margin / cost * 100) : null;
+    const channels = (item.channels || []).map(c => `<span class="channel-badge">${c}</span>`).join('');
+
+    const priceDisplay = (item.status === 'sold' && item.soldPrice)
+      ? `<span class="price-current">${fmt(item.soldPrice)}</span><span class="price-cost">sold · cost ${fmt(cost)}</span>`
+      : `<span class="price-current">${fmt(price)}</span><span class="price-cost">cost ${fmt(cost)}</span>`;
+
+    const marginBadge = margin != null
+      ? `<span class="price-margin ${margin >= 0 ? 'margin-pos' : 'margin-neg'}">${margin >= 0 ? '+' : ''}${fmt(margin)}${marginPct != null ? ` · ${marginPct}%` : ''}</span>`
+      : '';
+
+    const phEntries = (item.priceHistory || []).slice(-3).map((ph, idx, arr) => {
+      const prev = idx > 0 ? arr[idx-1].price : null;
+      const delta = prev != null
+        ? `<span class="ph-delta ${ph.price >= prev ? 'up' : 'down'}">${ph.price >= prev ? '▲' : '▼'} ${fmt(Math.abs(ph.price - prev))}</span>`
+        : '';
+      return `<div class="ph-entry"><span class="ph-date">${fmtDate(ph.date)||ph.date}</span><span class="ph-price">${fmt(ph.price)}</span>${delta}</div>`;
+    }).join('');
+
+    const phSection = phEntries ? `
+      <div class="price-history-mini">
+        <div class="ph-label">Price History</div>
+        <div class="ph-entries">${phEntries}</div>
+      </div>` : '';
+
+    return `
+      <div class="item-card" onclick="openModal('${item.id}')">
+        <div class="card-top">
+          <svg class="card-top-bg" viewBox="0 0 280 80" preserveAspectRatio="xMidYMid slice">
+            <path d="M-10 50 C40 20 100 45 180 18 C230 4 265 22 300 15" stroke="rgba(200,169,110,.1)" stroke-width="1.5" fill="none"/>
+          </svg>
+          <div class="card-top-content">
+            ${channels ? `<div class="card-channel-badges">${channels}</div>` : ''}
+            <div class="card-item-name">${item.name || 'Untitled'}</div>
+            <div class="card-item-brand">${item.brand || ''}</div>
+          </div>
+          <span class="card-status-badge ${statusCls[item.status]||'status-draft'}">${statusLabel[item.status]||'Draft'}</span>
+        </div>
+        <div class="card-accent-bar"></div>
+        <div class="card-body">
+          <div class="price-row">
+            <div style="display:flex;align-items:baseline;gap:10px">${priceDisplay}</div>
+            ${marginBadge}
+          </div>
+          <div class="meta-row">
+            ${item.category ? `<span class="meta-item">${item.category}</span>` : ''}
+            ${item.acquired ? `<span class="meta-item">Acq. ${fmtDate(item.acquired)}</span>` : ''}
+            <span class="meta-item ${item.receipt ? 'receipt-yes' : 'receipt-no'}">${item.receipt ? '✓ Receipt' : 'No receipt'}</span>
+          </div>
+          ${phSection}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────
+function openModal(id) {
+  editingId = id || null;
+  pendingPriceHistory = [];
+
+  const overlay  = document.getElementById('modal-overlay');
+  const title    = document.getElementById('modal-title');
+  const delBtn   = document.getElementById('btn-delete');
+  const soldWrap = document.getElementById('f-sold-price-wrap');
+
+  if (id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    title.innerHTML = 'Edit <em>Item</em>';
+    delBtn.style.display = '';
+    document.getElementById('f-name').value       = item.name || '';
+    document.getElementById('f-brand').value      = item.brand || '';
+    document.getElementById('f-category').value   = item.category || '';
+    document.getElementById('f-notes').value      = item.notes || '';
+    document.getElementById('f-cost').value       = item.cost || '';
+    document.getElementById('f-price').value      = item.price || '';
+    document.getElementById('f-sold-price').value = item.soldPrice || '';
+    document.getElementById('f-status').value     = item.status || 'draft';
+    document.getElementById('f-acquired').value   = item.acquired || '';
+    document.getElementById('f-receipt').checked  = !!item.receipt;
+    document.querySelectorAll('[name="channel"]').forEach(cb => {
+      cb.checked = (item.channels || []).includes(cb.value);
+    });
+    pendingPriceHistory = JSON.parse(JSON.stringify(item.priceHistory || []));
+    soldWrap.style.display = item.status === 'sold' ? '' : 'none';
+  } else {
+    title.innerHTML = 'Add <em>Item</em>';
+    delBtn.style.display = 'none';
+    ['f-name','f-brand','f-category','f-notes','f-cost','f-price','f-sold-price'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('f-status').value  = 'draft';
+    document.getElementById('f-acquired').value = '';
+    document.getElementById('f-receipt').checked = false;
+    document.querySelectorAll('[name="channel"]').forEach(cb => cb.checked = false);
+    soldWrap.style.display = 'none';
+  }
+
+  renderPriceHistory();
+  overlay.classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+  pendingPriceHistory = [];
+}
+
+function saveItem() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); showToast('Item name is required', true); return; }
+  const status   = document.getElementById('f-status').value;
+  const channels = [...document.querySelectorAll('[name="channel"]:checked')].map(cb => cb.value);
+  const data = {
+    name,
+    brand:        document.getElementById('f-brand').value.trim(),
+    category:     document.getElementById('f-category').value.trim(),
+    notes:        document.getElementById('f-notes').value.trim(),
+    cost:         document.getElementById('f-cost').value || '',
+    price:        document.getElementById('f-price').value || '',
+    soldPrice:    document.getElementById('f-sold-price').value || '',
+    status, channels,
+    acquired:     document.getElementById('f-acquired').value,
+    receipt:      document.getElementById('f-receipt').checked,
+    priceHistory: pendingPriceHistory,
+  };
+
+  if (editingId) {
+    const idx = items.findIndex(i => i.id === editingId);
+    if (idx >= 0) items[idx] = { ...items[idx], ...data };
+  } else {
+    items.unshift({ id: newId(), ...data });
+  }
+
+  closeModal();
+  render();
+  scheduleSave();
+  showToast(editingId ? 'Item updated' : 'Item added');
+}
+
+function deleteItem() {
+  if (!editingId) return;
+  if (!confirm('Delete this item? This cannot be undone.')) return;
+  items = items.filter(i => i.id !== editingId);
+  closeModal();
+  render();
+  scheduleSave();
+  showToast('Item deleted');
+}
+
+// ── PRICE HISTORY ──────────────────────────────────────────────────────────
+function addPriceRow() {
+  const priceVal = document.getElementById('ph-price-input').value;
+  const noteVal  = document.getElementById('ph-note-input').value.trim();
+  if (!priceVal) { document.getElementById('ph-price-input').focus(); return; }
+  pendingPriceHistory.push({ date: new Date().toISOString().slice(0,10), price: Number(priceVal), note: noteVal });
+  document.getElementById('ph-price-input').value = '';
+  document.getElementById('ph-note-input').value  = '';
+  renderPriceHistory();
+}
+
+function removePriceRow(idx) {
+  pendingPriceHistory.splice(idx, 1);
+  renderPriceHistory();
+}
+
+function renderPriceHistory() {
+  const list = document.getElementById('ph-history-list');
+  if (!pendingPriceHistory.length) { list.innerHTML = ''; return; }
+  list.innerHTML = pendingPriceHistory.map((ph, i) => {
+    const prev = i > 0 ? pendingPriceHistory[i-1].price : null;
+    const changeBadge = prev == null
+      ? '<span class="ph-change initial">Initial</span>'
+      : `<span class="ph-change ${ph.price >= prev ? 'raise' : 'lower'}">${ph.price >= prev ? '▲' : '▼'} ${fmt(Math.abs(ph.price - prev))}</span>`;
+    return `
+      <div class="ph-history-item">
+        <div class="ph-info">
+          <span style="font-weight:500">${fmt(ph.price)}</span>
+          <span style="color:var(--text-faint)">${ph.date}</span>
+          ${ph.note ? `<span style="color:var(--text-dim)">${ph.note}</span>` : ''}
+          ${changeBadge}
+        </div>
+        <button class="ph-del" onclick="removePriceRow(${i})">×</button>
+      </div>`;
+  }).join('');
+}
+
+// ── STATUS CHANGE ──────────────────────────────────────────────────────────
+function onStatusChange() {
+  const status = document.getElementById('f-status').value;
+  document.getElementById('f-sold-price-wrap').style.display = status === 'sold' ? '' : 'none';
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadLocal();
+  render();
+  updateSetupBanner();
+
+  document.getElementById('btn-add').addEventListener('click', () => openModal(null));
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('btn-cancel').addEventListener('click', closeModal);
+  document.getElementById('btn-save').addEventListener('click', saveItem);
+  document.getElementById('btn-delete').addEventListener('click', deleteItem);
+  document.getElementById('ph-add-btn').addEventListener('click', addPriceRow);
+  document.getElementById('f-status').addEventListener('change', onStatusChange);
+  document.getElementById('modal-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  });
+  document.getElementById('search-input').addEventListener('input', e => {
+    searchQuery = e.target.value; renderGrid();
+  });
+  document.getElementById('filter-status').addEventListener('change', e => {
+    filterStatus = e.target.value; renderGrid();
+  });
+  document.getElementById('filter-channel').addEventListener('change', e => {
+    filterChannel = e.target.value; renderGrid();
+  });
+
+  if (configOk()) syncFromGitHub();
+});
+
 // ── KEYBOARD + SAFETY GUARDS ──
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closeModal(); closePATModal(); }
@@ -979,6 +1294,7 @@ document.addEventListener('keydown', e => {
 window.addEventListener('beforeunload', e => {
   if (saveTimer || pendingSave) { e.preventDefault(); e.returnValue = ''; }
 });
+
 </script>
 </body>
 </html>
