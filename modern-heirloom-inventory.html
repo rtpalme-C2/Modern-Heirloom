@@ -819,7 +819,7 @@ function openPATModal() {
 function closePATModal() { document.getElementById('pat-modal').classList.remove('open'); }
 function patBackdropClose(e) { if (e.target === document.getElementById('pat-modal')) closePATModal(); }
 
-async async function savePAT() {
+async function savePAT() {
   const val = document.getElementById('pat-input').value.trim();
   if (!val) { document.getElementById('pat-input').focus(); return; }
   localStorage.setItem(LS_PAT, val);
@@ -968,6 +968,7 @@ function newId(){
   return Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 }
 
+</script>
 </body>
 </html>
 // ── KEYBOARD + SAFETY GUARDS ──
