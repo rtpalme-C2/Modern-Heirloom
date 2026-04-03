@@ -1218,6 +1218,40 @@ function renderGrid() {
   }).join('');
 }
 
+
+function openModal(id) {
+  editingId = id || null;
+  const item = id ? items.find(i => i.id === id) : null;
+
+  document.querySelector('#modal-overlay .modal-title').textContent = item ? 'Edit Item' : 'Add Item';
+  document.getElementById('btn-delete').style.display = item ? '' : 'none';
+
+  document.getElementById('f-name').value        = item ? (item.name || '')      : '';
+  document.getElementById('f-brand').value       = item ? (item.brand || '')     : '';
+  document.getElementById('f-category').value    = item ? (item.category || '')  : '';
+  document.getElementById('f-notes').value       = item ? (item.notes || '')     : '';
+  document.getElementById('f-cost').value        = item ? (item.cost || '')      : '';
+  document.getElementById('f-price').value       = item ? (item.price || '')     : '';
+  document.getElementById('f-sold-price').value  = item ? (item.soldPrice || '') : '';
+  document.getElementById('f-status').value      = item ? (item.status || 'draft') : 'draft';
+  document.getElementById('f-acquired').value    = item ? (item.acquired || '')  : '';
+  document.getElementById('f-receipt').checked   = item ? !!item.receipt : false;
+
+  document.querySelectorAll('[name="channel"]').forEach(cb => {
+    cb.checked = item ? (item.channels || []).includes(cb.value) : false;
+  });
+
+  pendingPriceHistory = item ? [...(item.priceHistory || [])] : [];
+  pendingImages       = item ? [...(item.images || [])]       : [];
+  renderPriceHistory();
+  renderImageList();
+
+  document.getElementById('f-sold-price-wrap').style.display =
+    (item && item.status === 'sold') ? '' : 'none';
+
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('f-name').focus(), 50);
+}
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   editingId = null;
