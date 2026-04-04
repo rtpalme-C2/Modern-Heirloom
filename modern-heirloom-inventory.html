@@ -1081,7 +1081,8 @@ let searchQuery = '';
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function fmt(n) {
   if (n == null || n === '' || isNaN(n)) return '—';
-  return '
+  return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
 function fmtDate(d) {
   if (!d) return '';
   const [y, m, day] = d.split('-');
