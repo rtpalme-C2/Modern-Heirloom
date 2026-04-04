@@ -609,9 +609,19 @@ header{
 .ps-badge.receipt{background:#1C0810;color:#F5F2EC;border-color:#1C0810}
 .ps-footer{margin:0 48px;padding:20px 0;border-top:1px solid rgba(28,8,16,.1);display:flex;align-items:center;justify-content:space-between}
 .ps-footer-tagline{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(28,8,16,.3);font-style:italic}
+
+.ps-header{page-break-inside:avoid}
+.ps-hero{page-break-inside:avoid;page-break-after:avoid}
+.ps-photo-strip{page-break-inside:avoid;page-break-before:avoid}
+.ps-body{page-break-inside:avoid}
+.ps-price-row{page-break-inside:avoid}
+.ps-badges{page-break-inside:avoid}
+.ps-footer{page-break-inside:avoid;page-break-before:auto}
+.ps-description{orphans:3;widows:3}
 .ps-footer-appt{font-size:.62rem;letter-spacing:.1em;color:#8B2040;font-weight:500}
-.card-print-btn{position:absolute;top:10px;right:10px;background:rgba(28,8,16,.55);border:none;border-radius:8px;color:rgba(245,242,236,.7);padding:5px 7px;cursor:pointer;display:flex;align-items:center;transition:background .18s,color .18s;z-index:2}
-.card-print-btn:hover{background:#D4617A;color:white}
+.card-footer-actions{display:flex;justify-content:flex-end;padding:6px 14px 10px;border-top:1px solid var(--mh-petal-dim)}
+.card-print-btn{background:transparent;border:1px solid var(--mh-petal-dim);border-radius:8px;color:var(--text-dim);padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:all .18s}
+.card-print-btn:hover{background:var(--mh-accent);border-color:var(--mh-accent);color:white}
 </style>
 </head>
 <body>
@@ -1250,8 +1260,7 @@ function renderGrid() {
       '<div class="card-item-brand">' + (item.brand || '') + '</div>' +
       '</div>' +
       '<span class="card-status-badge ' + (statusCls[item.status]||'status-draft') + '">' + (statusLabel[item.status]||'Draft') + '</span>' +
-      '<button class="card-print-btn" onclick="event.stopPropagation();printItem(\'' + item.id + '\')" title="Print sales sheet"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>' +
-      '</div>' +
+            '</div>' +
       '<div class="card-accent-bar"></div>' +
       '<div class="card-body">' +
       '<div class="price-row">' +
@@ -1265,6 +1274,7 @@ function renderGrid() {
       (item.receipt ? '✓ Receipt' : 'No receipt') + '</span>' +
       '</div>' +
       phSection +
+      '<div class="card-footer-actions"><button class="card-print-btn" onclick="event.stopPropagation();printItem(\'' + item.id + '\')" title="Generate sales sheet"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> PDF</button></div>' +
       '</div>' +
       '</div>';
   }).join('');
