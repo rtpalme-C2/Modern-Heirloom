@@ -861,7 +861,6 @@ header{
 <div class="toast" id="toast"></div>
 
 <script>
-  document.getElementById('f-cost-currency').value = item ? (item.costCurrency || 'USD') : 'USD';
 // ════════════════════════════════════════════════════════════════════
 //  GITHUB SYNC CONFIG
 // ════════════════════════════════════════════════════════════════════
@@ -1255,6 +1254,7 @@ function openModal(id) {
   document.getElementById('f-sold-price').value  = item ? (item.soldPrice || '') : '';
   document.getElementById('f-status').value      = item ? (item.status || 'draft') : 'draft';
   document.getElementById('f-acquired').value    = item ? (item.acquired || '')  : '';
+  document.getElementById('f-cost-currency').value = item ? (item.costCurrency || 'USD') : 'USD';
   document.getElementById('f-receipt').checked   = item ? !!item.receipt : false;
 
   document.querySelectorAll('[name="channel"]').forEach(cb => {
