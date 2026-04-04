@@ -1088,11 +1088,12 @@ function fmtDate(d) {
   return new Date(y, m - 1, day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 function fmtCost(n, currency) {
-  if (n == null || n === '' || isNaN(n)) return '—';
-  const symbols = { USD: '$', EUR: '€', GBP: '£', MXN: 'MX$' };
-  const sym = symbols[currency] || '$';
-  const suffix = (currency && currency !== 'USD') ? ' ' + currency : '';
-  return sym + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + suffix;
+  if (n == null || n === '' || isNaN(n)) return '--';
+  var symbols = { USD: '$', EUR: 'EUR ', GBP: 'GBP ', MXN: 'MX$' };
+  var sym = symbols[currency] || '$';
+  var num = Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  var suffix = (currency && currency !== 'USD') ? ' ' + currency : '';
+  return sym + num + suffix;
 }
 function showToast(msg, isErr) {
   const t = document.getElementById('toast');
