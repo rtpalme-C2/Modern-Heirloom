@@ -56,7 +56,7 @@ header{
 }
 .hdr-name{
   font-size:clamp(1.6rem,3vw,2.2rem);
-  font-weight:500;color:var(--mh-petal);
+  font-weight:300;color:var(--mh-petal);
   letter-spacing:-.02em;line-height:1;
   margin-bottom:6px;
 }
@@ -77,10 +77,10 @@ header{
   padding:8px 40px;background:var(--mh-mid);border-bottom:1px solid rgba(212,97,122,.15);
   font-size:.74rem;
 }
-.sync-status{display:flex;align-items:center;gap:8px;color:#888}
+.sync-status{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.38)}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0;transition:background .3s}
 .sync-dot.connected{background:#2e8b57}
-.sync-dot.saving{background:#C8A96E;animation:pulse .8s infinite}
+.sync-dot.saving{background:var(--mh-rose);animation:pulse .8s infinite}
 .sync-dot.error{background:#c0392b}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .sync-actions{display:flex;gap:8px}
@@ -88,11 +88,11 @@ header{
   font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:500;
   letter-spacing:.06em;text-transform:uppercase;
   padding:5px 14px;border-radius:20px;border:1.5px solid rgba(200,169,110,.25);
-  background:white;color:var(--text-mid);cursor:pointer;transition:all .18s;
+  background:transparent;color:rgba(255,255,255,.7);cursor:pointer;transition:all .18s;
 }
-.btn-sync:hover{border-color:rgba(200,169,110,.5);color:var(--text-main)}
-.btn-sync.primary{background:var(--near-black);border-color:var(--near-black);color:#C8A96E}
-.btn-sync.primary:hover{background:var(--charcoal);border-color:var(--charcoal)}
+.btn-sync:hover{border-color:var(--mh-rose);color:var(--mh-petal)}
+.btn-sync.primary{background:var(--mh-dark);border-color:var(--mh-dark);color:var(--mh-rose)}
+.btn-sync.primary:hover{background:var(--mh-mid);border-color:var(--mh-mid)}
 
 /* ── CONFIG NOTICE ── */
 .config-notice{
@@ -139,12 +139,12 @@ header{
 .btn-add{
   font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;
-  background:var(--near-black);color:#C8A96E;
+  background:var(--mh-dark);color:var(--mh-rose);
   border:1px solid rgba(200,169,110,.3);
   padding:9px 20px;border-radius:20px;cursor:pointer;
   transition:all .15s;white-space:nowrap;
 }
-.btn-add:hover{background:var(--charcoal);border-color:rgba(200,169,110,.6)}
+.btn-add:hover{background:var(--mh-mid);border-color:rgba(200,169,110,.6)}
 
 /* ── STATS ── */
 .stats-row{
@@ -159,7 +159,7 @@ header{
 }
 .stat-label{font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);font-weight:500}
 .stat-value{font-size:1.2rem;font-weight:500;color:var(--text-main);letter-spacing:-.02em}
-.stat-value.gold{color:var(--champagne)}
+.stat-value.gold{color:var(--mh-rose)}
 
 /* ── ITEM GRID ── */
 .items-wrap{padding:20px 40px 80px}
@@ -192,7 +192,7 @@ header{
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 .card-top{
-  background:var(--near-black);
+  background:var(--mh-dark);
   padding:16px 18px;
   position:relative;
   display:flex;align-items:flex-start;justify-content:space-between;
@@ -220,7 +220,7 @@ header{
   margin-top:2px;
 }
 .status-active{background:rgba(122,154,106,.2);color:#9ABA8A;border:1px solid rgba(122,154,106,.25)}
-.status-sold{background:rgba(200,169,110,.2);color:#C8A96E;border:1px solid rgba(200,169,110,.25)}
+.status-sold{background:rgba(200,169,110,.2);color:var(--mh-rose);border:1px solid rgba(200,169,110,.25)}
 .status-draft{background:rgba(150,144,136,.15);color:#9A9488;border:1px solid rgba(150,144,136,.2)}
 .status-hold{background:rgba(180,130,80,.2);color:#C89060;border:1px solid rgba(180,130,80,.25)}
 
@@ -272,9 +272,9 @@ header{
   color:var(--text-dim);padding:7px;border-radius:8px;cursor:pointer;
   transition:all .15s;
 }
-.card-btn:hover{border-color:rgba(200,169,110,.4);color:var(--champagne);background:rgba(200,169,110,.05)}
-.card-btn.primary{background:var(--near-black);color:rgba(242,237,232,.8);border-color:transparent}
-.card-btn.primary:hover{background:var(--charcoal);color:#C8A96E}
+.card-btn:hover{border-color:rgba(200,169,110,.4);color:var(--mh-rose);background:rgba(200,169,110,.05)}
+.card-btn.primary{background:var(--mh-dark);color:rgba(242,237,232,.8);border-color:transparent}
+.card-btn.primary:hover{background:var(--mh-mid);color:var(--mh-rose)}
 
 /* ── MODAL OVERLAY ── */
 .modal-overlay{
@@ -285,7 +285,7 @@ header{
 }
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal{
-  background:var(--crisp);
+  background:var(--mh-petal);
   border-radius:16px;width:100%;max-width:560px;
   max-height:90vh;overflow-y:auto;
   transform:translateY(16px);transition:transform .2s;
@@ -294,7 +294,7 @@ header{
 .modal-overlay.open .modal{transform:translateY(0)}
 
 .modal-header{
-  background:var(--near-black);padding:24px 28px;
+  background:var(--mh-dark);padding:24px 28px;
   position:relative;overflow:hidden;
   border-radius:16px 16px 0 0;
 }
@@ -314,7 +314,7 @@ header{
 .form-section{margin-bottom:24px}
 .form-section-label{
   font-size:8px;letter-spacing:.2em;text-transform:uppercase;
-  font-weight:500;color:var(--champagne);margin-bottom:12px;
+  font-weight:500;color:var(--mh-rose);margin-bottom:12px;
 }
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form-grid.full{grid-template-columns:1fr}
@@ -393,7 +393,7 @@ header{
 .ph-change{font-size:10px;font-weight:500;padding:2px 6px;border-radius:20px}
 .ph-change.raise{background:rgba(122,154,106,.12);color:#7A9A6A}
 .ph-change.lower{background:rgba(196,106,90,.12);color:#C46A5A}
-.ph-change.initial{background:rgba(200,169,110,.12);color:#C8A96E}
+.ph-change.initial{background:rgba(200,169,110,.12);color:var(--mh-rose)}
 
 .modal-footer{
   border-top:1px solid var(--border);
@@ -410,11 +410,11 @@ header{
 .btn-cancel:hover{border-color:var(--text-dim);color:var(--text-main)}
 .btn-save{
   font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
-  font-weight:500;background:var(--near-black);color:#C8A96E;
+  font-weight:500;background:var(--mh-dark);color:var(--mh-rose);
   border:1px solid rgba(200,169,110,.3);
   padding:9px 24px;border-radius:20px;cursor:pointer;transition:all .15s;
 }
-.btn-save:hover{background:var(--charcoal);border-color:rgba(200,169,110,.6)}
+.btn-save:hover{background:var(--mh-mid);border-color:rgba(200,169,110,.6)}
 .btn-danger{
   font-family:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
   font-weight:500;background:none;border:1px solid rgba(196,106,90,.3);
@@ -426,7 +426,7 @@ header{
 /* ── TOAST ── */
 .toast{
   position:fixed;bottom:24px;right:24px;z-index:200;
-  background:var(--near-black);color:#F2EDE8;
+  background:var(--mh-dark);color:#F2EDE8;
   font-size:12px;letter-spacing:.04em;
   padding:12px 18px;border-radius:10px;
   border-left:3px solid #C8A96E;
@@ -545,7 +545,7 @@ header{
 /* Card image strip */
 .card-img-strip{
   width:100%;aspect-ratio:16/9;overflow:hidden;position:relative;
-  background:var(--near-black);
+  background:var(--mh-dark);
 }
 .card-img-main{
   width:100%;height:100%;object-fit:cover;display:block;
@@ -1003,9 +1003,11 @@ async function saveToGitHub() {
     const result = await res.json();
     if (result.content && result.content.sha) setSHA(result.content.sha);
     pendingSave = false;
+    saveTimer = null;
     setSyncStatus('connected', 'Saved to GitHub · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
   } catch(e) {
     pendingSave = false;
+    saveTimer = null;
     setSyncStatus('error', 'Save failed — changes kept locally');
     showToast('GitHub save failed: ' + e.message);
   }
@@ -1066,11 +1068,6 @@ let pendingImages = [];
 let filterChannel = '';
 let searchQuery = '';
 
-// ── CSS VAR FIXES ──────────────────────────────────────────────────────────
-document.documentElement.style.setProperty('--near-black', '#1C0810');
-document.documentElement.style.setProperty('--charcoal',   '#3A1020');
-document.documentElement.style.setProperty('--champagne',  '#C8A96E');
-document.documentElement.style.setProperty('--crisp',      '#FFFFFF');
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function fmt(n) {
