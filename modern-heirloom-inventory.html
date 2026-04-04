@@ -1131,11 +1131,11 @@ function fmtDate(d) {
 }
 function fmtCost(n, currency) {
   if (n == null || n === '' || isNaN(n)) return '--';
-  var symbols = { USD: '$', EUR: 'EUR ', GBP: 'GBP ', MXN: 'MX$' };
-  var sym = symbols[currency] || '$';
   var num = Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
-  var suffix = (currency && currency !== 'USD') ? ' ' + currency : '';
-  return sym + num + suffix;
+  if (!currency || currency === 'USD') return '$' + num;
+  var symbols = { EUR: '€', GBP: '£', MXN: 'MX$' };
+  var sym = symbols[currency];
+  return sym ? sym + num + ' ' + currency : num + ' ' + currency;
 }
 function showToast(msg, isErr) {
   const t = document.getElementById('toast');
@@ -1215,7 +1215,7 @@ function renderGrid() {
 
     const priceDisplay = (item.status === 'sold' && item.soldPrice)
       ? '<span class="price-current">' + fmt(item.soldPrice) + '</span><span class="price-cost">sold · cost ' + fmtCost(cost, item.costCurrency) + '</span>'
-      : '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">cost ' + fmt(cost) + '</span>';
+      : '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">cost ' + fmtCost(cost, item.costCurrency) + '</span>';
 
     const marginBadge = margin != null
       ? '<span class="price-margin ' + (margin >= 0 ? 'margin-pos' : 'margin-neg') + '">' +
