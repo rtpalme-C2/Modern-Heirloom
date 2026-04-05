@@ -631,10 +631,36 @@ header{
 .card-footer-actions{display:flex;justify-content:flex-end;padding:6px 14px 10px;border-top:1px solid var(--mh-petal-dim)}
 .card-print-btn{background:transparent;border:1px solid var(--mh-petal-dim);border-radius:8px;color:var(--text-dim);padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:all .18s}
 .card-print-btn:hover{background:var(--mh-accent);border-color:var(--mh-accent);color:white}
+
+/* ── VIEW MODE ── */
+.view-banner{
+  background:var(--mh-mid);
+  padding:10px 40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  border-bottom:1px solid rgba(212,97,122,.2);
+}
+.view-banner-text{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);font-weight:500;
+}
+.view-banner-text strong{color:var(--mh-rose);font-weight:600}
+.view-banner-contact{
+  font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.04em;
+}
+.view-banner-contact a{color:var(--mh-rose);text-decoration:none}
+.view-banner-contact a:hover{text-decoration:underline}
+body.view-mode .sync-bar,
+body.view-mode .config-notice,
+body.view-mode .btn-add,
+body.view-mode .filter-select{display:none!important}
+body.view-mode .toolbar{justify-content:flex-start}
+@media(max-width:480px){
+  .view-banner{padding:10px 16px;flex-direction:column;align-items:flex-start}
+}
 </style>
 </head>
 <body>
-<div id="view-banner" style="display:none" class="view-banner"><div class="view-banner-text"><strong>Modern Heirloom</strong> &nbsp;&middot;&nbsp; Authenticated &middot; Curated &middot; Provenance</div><div class="view-banner-contact">Robert Palme &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#d0a2bfb2b5a2a48fa0b1bcbdb590bdb5feb3bfbd"><span class="__cf_email__" data-cfemail="463429242334321936272a2b23062b236825292b">[email&#160;protected]</span></a> &nbsp;&middot;&nbsp; WhatsApp +1 562 852 4798</div></div>
+<div id="view-banner" style="display:none" class="view-banner"><div class="view-banner-text"><strong>Modern Heirloom</strong> &nbsp;&middot;&nbsp; Authenticated &middot; Curated &middot; Provenance</div><div class="view-banner-contact">Robert Palme &nbsp;&middot;&nbsp; <a href="mailto:robert_palme@me.com">robert_palme@me.com</a> &nbsp;&middot;&nbsp; WhatsApp +1 562 852 4798</div></div>
 
 <!-- ── HEADER ── -->
 <header>
@@ -956,7 +982,7 @@ header{
 
 <div class="toast" id="toast"></div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ════════════════════════════════════════════════════════════════════
 //  GITHUB SYNC CONFIG
 // ════════════════════════════════════════════════════════════════════
