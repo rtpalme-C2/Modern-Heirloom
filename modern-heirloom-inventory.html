@@ -1301,7 +1301,8 @@ function renderGrid() {
 
     const topStyle = imgs.length ? ' style="border-radius:0"' : '';
 
-    return '<div class="item-card" onclick="openModal(\'' + item.id + '\')">' +
+    var cardClick = IS_VIEW_MODE ? '' : ' onclick="openModal(\'' + item.id + '\'")';
+    return '<div class="item-card"' + cardClick + '>' +
       imgStrip +
       '<div class="card-top"' + topStyle + '>' +
       '<svg class="card-top-bg" viewBox="0 0 280 80" preserveAspectRatio="xMidYMid slice">' +
