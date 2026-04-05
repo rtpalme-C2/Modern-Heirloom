@@ -634,7 +634,7 @@ header{
 </style>
 </head>
 <body>
-<div id="view-banner" style="display:none" class="view-banner"><div class="view-banner-text"><strong>Modern Heirloom</strong> &nbsp;&middot;&nbsp; Authenticated &middot; Curated &middot; Provenance</div><div class="view-banner-contact">Robert Palme &nbsp;&middot;&nbsp; <a href="mailto:robert_palme@me.com">robert_palme@me.com</a> &nbsp;&middot;&nbsp; WhatsApp +1 562 852 4798</div></div>
+<div id="view-banner" style="display:none" class="view-banner"><div class="view-banner-text"><strong>Modern Heirloom</strong> &nbsp;&middot;&nbsp; Authenticated &middot; Curated &middot; Provenance</div><div class="view-banner-contact">Robert Palme &nbsp;&middot;&nbsp; <a href="/cdn-cgi/l/email-protection#d0a2bfb2b5a2a48fa0b1bcbdb590bdb5feb3bfbd"><span class="__cf_email__" data-cfemail="463429242334321936272a2b23062b236825292b">[email&#160;protected]</span></a> &nbsp;&middot;&nbsp; WhatsApp +1 562 852 4798</div></div>
 
 <!-- ── HEADER ── -->
 <header>
@@ -956,7 +956,7 @@ header{
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ════════════════════════════════════════════════════════════════════
 //  GITHUB SYNC CONFIG
 // ════════════════════════════════════════════════════════════════════
@@ -1305,7 +1305,7 @@ function renderGrid() {
 
     const topStyle = imgs.length ? ' style="border-radius:0"' : '';
 
-    var cardClick = IS_VIEW_MODE ? '' : ' onclick="openModal(\'' + item.id + '\'")';
+    var cardClick = IS_VIEW_MODE ? '' : ' onclick="openModal(\'' + item.id + '\')"';
     return '<div class="item-card"' + cardClick + '>' +
       imgStrip +
       '<div class="card-top"' + topStyle + '>' +
@@ -1684,7 +1684,21 @@ function printItem(id) {
       '</div>' +
     '</div>';
   document.getElementById('print-content').innerHTML = page1 + page2;
-  window.print();
+  var allImgs = document.getElementById('print-content').querySelectorAll('img');
+  if (!allImgs.length) { window.print(); return; }
+  var loaded = 0;
+  var total = allImgs.length;
+  function onImgSettled() {
+    loaded++;
+    if (loaded >= total) window.print();
+  }
+  allImgs.forEach(function(img) {
+    if (img.complete) { onImgSettled(); }
+    else {
+      img.addEventListener('load', onImgSettled);
+      img.addEventListener('error', onImgSettled);
+    }
+  });
 }
 </script>
 <div id="print-sheet"><div id="print-content"></div></div>
