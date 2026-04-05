@@ -634,6 +634,7 @@ header{
 </style>
 </head>
 <body>
+<div id="view-banner" style="display:none" class="view-banner"><div class="view-banner-text"><strong>Modern Heirloom</strong> &nbsp;&middot;&nbsp; Authenticated &middot; Curated &middot; Provenance</div><div class="view-banner-contact">Robert Palme &nbsp;&middot;&nbsp; <a href="mailto:robert_palme@me.com">robert_palme@me.com</a> &nbsp;&middot;&nbsp; WhatsApp +1 562 852 4798</div></div>
 
 <!-- ── HEADER ── -->
 <header>
@@ -1198,6 +1199,9 @@ function showToast(msg, isErr) {
 }
 
 // ── RENDER ─────────────────────────────────────────────────────────────────
+// ── VIEW MODE ──
+const IS_VIEW_MODE = new URLSearchParams(window.location.search).has('view');
+
 function render() {
   renderStats();
   renderGrid();
@@ -1487,6 +1491,27 @@ function onStatusChange() {
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+
+  if (IS_VIEW_MODE) {
+    document.body.classList.add('view-mode');
+    const banner = document.getElementById('view-banner');
+    if (banner) banner.style.display = '';
+    fetch(GH_RAW_URL + '?t=' + Date.now())
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function(data) {
+        items = (data.items || []).filter(function(i) { return i.status === 'active'; });
+        render();
+      })
+      .catch(function() {
+        document.getElementById('items-grid').innerHTML =
+          '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-dim);font-size:.85rem">Unable to load inventory. Please try again later.</div>';
+      });
+    document.getElementById('search-input').addEventListener('input', function(e) {
+      searchQuery = e.target.value; renderGrid();
+    });
+    return;
+  }
+
   loadLocal();
   render();
   updateSetupBanner();
