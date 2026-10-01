@@ -626,7 +626,7 @@ header{
 .ps-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .ps-badge{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:20px;white-space:nowrap;border:1px solid #1a1a1a;color:#1a1a1a}
 .ps-badge.receipt{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.ps-footer{border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between;align-items:center}
+.ps-footer{border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:flex-end;align-items:center}
 .ps-footer-tagline{font-size:8px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#888}
 .ps-footer-appt{font-size:8.5px;color:#5c1a2e;font-style:italic;font-family:'Cormorant Garamond','Plus Jakarta Sans',serif}
 .card-footer-actions{display:flex;justify-content:flex-end;padding:6px 14px 10px;border-top:1px solid var(--mh-petal-dim)}
@@ -1948,10 +1948,7 @@ function printItem(id) {
         '</div>' +
         '<div class="ps-badges">' + badgesHtml + '</div>' +
       '</div>' +
-      '<div class="ps-footer">' +
-        '<div class="ps-footer-tagline">Authenticated &middot; Curated &middot; Provenance</div>' +
-        (forSaleStatus ? '<div class="ps-footer-appt">Available for in-person or FaceTime viewing by appointment.</div>' : '') +
-      '</div>' +
+      (forSaleStatus ? '<div class="ps-footer"><div class="ps-footer-appt">Available for in-person or FaceTime viewing by appointment.</div></div>' : '') +
     '</div>';
   document.getElementById('print-content').innerHTML = page1 + page2 + '</div>';
   var allImgs = document.getElementById('print-content').querySelectorAll('img');
