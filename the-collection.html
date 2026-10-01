@@ -588,44 +588,45 @@ header{
   body{background:white;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 #print-sheet{display:none;font-family:'Plus Jakarta Sans',sans-serif;background:white;color:#1a1a1a}
-.ps-page1{width:8.5in;height:11in;overflow:hidden;page-break-after:always;break-after:page}
-.ps-page2{width:8.5in;min-height:11in;padding:.55in;display:flex;flex-direction:column;page-break-after:always;break-after:page}
-.ps-header{display:flex;justify-content:space-between;align-items:flex-start;padding:.32in .55in .28in;background:#fff}
+.ps-page{width:8.5in;height:10.9in;overflow:hidden;display:flex;flex-direction:column;background:#fff;page-break-after:avoid;break-after:avoid}
+.ps-hero-wrap{flex:1 1 0;min-height:1.3in;overflow:hidden;position:relative;background:#c8b89a}
+.ps-body{flex:none;padding:.2in .5in .26in;display:flex;flex-direction:column}
+.ps-header{flex:none;display:flex;justify-content:space-between;align-items:flex-start;padding:.24in .5in .18in;background:#fff}
 .ps-wordmark{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:28px;font-weight:300;letter-spacing:.02em;color:#1a1a1a}
 .ps-wordmark em{font-style:italic;color:#5c1a2e}
 .ps-contact{text-align:right}
 .ps-contact-name{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#1a1a1a;margin-bottom:3px}
 .ps-contact-detail{font-size:9px;color:#666;line-height:1.7;letter-spacing:.04em}
 .ps-contact-detail a{color:#666;text-decoration:none}
-.ps-hero{width:100%;height:4.6in;object-fit:cover;display:block}
-.ps-hero-placeholder{width:100%;height:4.6in;background:#c8b89a;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
-.ps-photo-strip{display:grid;grid-template-columns:repeat(4,1fr);height:1.55in}
-.ps-photo-strip img{width:100%;height:100%;object-fit:cover;display:block}
+.ps-hero{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:block}
+.ps-hero-placeholder{width:100%;height:100%;background:#c8b89a;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.ps-photo-strip{flex:none;display:grid;height:.95in;grid-template-rows:.95in;overflow:hidden;gap:2px;background:#fff;border-top:2px solid #fff}
+.ps-photo-strip img{width:100%;height:.95in;min-height:0;object-fit:cover;display:block}
 .ps-photo-strip-slot{background:#b0a090}
-.ps-category{font-size:8.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#5c1a2e;margin-bottom:10px}
-.ps-item-name{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:36px;font-weight:300;line-height:1.15;color:#1a1a1a;margin-bottom:6px}
-.ps-brand{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:14px}
-.ps-divider{height:1px;background:#5c1a2e;opacity:.3;margin-bottom:14px}
-.ps-description{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:12.5px;line-height:1.62;color:#444;margin-bottom:12px;white-space:pre-wrap}
+.ps-category{font-size:8.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#5c1a2e;margin-bottom:5px}
+.ps-item-name{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:27px;font-weight:300;line-height:1.15;color:#1a1a1a;margin-bottom:4px}
+.ps-brand{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#888;margin-bottom:8px}
+.ps-divider{height:1px;background:#5c1a2e;opacity:.3;margin-bottom:8px}
+.ps-description{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:11.5px;line-height:1.5;color:#444;margin-bottom:8px;white-space:pre-wrap}
 .ps-features-label{font-size:8px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#1a1a1a;margin-bottom:7px}
-.ps-features{list-style:none;margin-bottom:12px}
-.ps-features li{font-size:10.5px;color:#444;padding:2px 0 2px 14px;position:relative;line-height:1.45}
+.ps-features{list-style:none;margin-bottom:8px;columns:2;column-gap:20px}
+.ps-features li{font-size:10px;color:#444;padding:1px 0 1px 14px;position:relative;line-height:1.4;break-inside:avoid}
 .ps-features li::before{content:'\2014';position:absolute;left:0;color:#5c1a2e;opacity:.7}
-.ps-condition{margin-bottom:12px}
-.ps-condition p{font-size:11px;color:#444;line-height:1.6;margin-bottom:3px}
+.ps-condition{margin-bottom:8px}
+.ps-condition p{font-size:10.5px;color:#444;line-height:1.45;margin-bottom:2px}
 .ps-condition p strong{color:#1a1a1a;font-weight:500}
-.ps-specs{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;margin-bottom:14px}
-.ps-spec{font-size:10.5px;color:#444;line-height:1.5}
+.ps-specs{display:grid;grid-template-columns:1fr 1fr;gap:2px 20px;margin-bottom:6px}
+.ps-spec{font-size:10px;color:#444;line-height:1.4}
 .ps-spec strong{color:#1a1a1a;font-weight:500}
 .ps-spec.full{grid-column:span 2}
-.ps-price-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;margin-bottom:16px}
+.ps-price-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px;margin-bottom:10px}
 .ps-price-left{display:flex;align-items:flex-end}
-.ps-price{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:52px;font-weight:300;color:#1a1a1a;line-height:1}
+.ps-price{font-family:'Cormorant Garamond','Plus Jakarta Sans',serif;font-size:40px;font-weight:300;color:#1a1a1a;line-height:1}
 .ps-price-label{font-size:8px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:#888;margin-left:10px;margin-bottom:10px}
 .ps-badges{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .ps-badge{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:20px;white-space:nowrap;border:1px solid #1a1a1a;color:#1a1a1a}
 .ps-badge.receipt{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.ps-footer{border-top:1px solid #ddd;padding-top:12px;display:flex;justify-content:space-between;align-items:center}
+.ps-footer{border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:space-between;align-items:center}
 .ps-footer-tagline{font-size:8px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#888}
 .ps-footer-appt{font-size:8.5px;color:#5c1a2e;font-style:italic;font-family:'Cormorant Garamond','Plus Jakarta Sans',serif}
 .card-footer-actions{display:flex;justify-content:flex-end;padding:6px 14px 10px;border-top:1px solid var(--mh-petal-dim)}
@@ -1508,10 +1509,12 @@ function renderGrid() {
           ? '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">target price</span>'
           : '<span class="price-cost">No target price</span>')
       : isStash
-      ? '<span class="price-current">' + fmtCost(cost, item.costCurrency) + '</span><span class="price-cost">paid</span>'
+      ? (cost ? '<span class="price-current">' + fmtCost(cost, item.costCurrency) + '</span><span class="price-cost">paid</span>'
+              : '<span class="price-cost">No cost entered</span>')
       : (item.status === 'sold' && item.soldPrice)
-      ? '<span class="price-current">' + fmt(item.soldPrice) + '</span><span class="price-cost">sold · cost ' + fmtCost(cost, item.costCurrency) + '</span>'
-      : '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">cost ' + fmtCost(cost, item.costCurrency) + '</span>';
+      ? '<span class="price-current">' + fmt(item.soldPrice) + '</span>' + (cost ? '<span class="price-cost">sold · cost ' + fmtCost(cost, item.costCurrency) + '</span>' : '<span class="price-cost">sold</span>')
+      : (price ? '<span class="price-current">' + fmt(price) + '</span>' : '<span class="price-cost">No asking price yet</span>') +
+        (cost ? '<span class="price-cost">cost ' + fmtCost(cost, item.costCurrency) + '</span>' : '');
 
     const marginBadge = (isSale && margin != null)
       ? '<span class="price-margin ' + (margin >= 0 ? 'margin-pos' : 'margin-neg') + '">' +
@@ -1574,7 +1577,7 @@ function renderGrid() {
       (item.receipt ? '✓ Receipt' : 'No receipt') + '</span>' : '') +
       '</div>' +
       phSection +
-      (isSale ? '<div class="card-footer-actions"><button class="card-print-btn" onclick="event.stopPropagation();printItem(\'' + item.id + '\')" title="Generate sales sheet"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> PDF</button></div>' : '') +
+      '<div class="card-footer-actions"><button class="card-print-btn" onclick="event.stopPropagation();printItem(\'' + item.id + '\')" title="Create PDF sheet"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> PDF</button></div>' +
       '</div>' +
       '</div>';
   }).join('');
@@ -1870,11 +1873,8 @@ function printItem(id) {
   var thumbCells = '';
   var thumbImgs = imgs.slice(1, 5);
   thumbImgs.forEach(function(u) { thumbCells += '<img src="' + u + '" alt="">'; });
-  for (var p = thumbImgs.length; p < 4; p++) {
-    thumbCells += '<div class="ps-photo-strip-slot"></div>';
-  }
   var page1 =
-    '<div class="ps-page1">' +
+    '<div class="ps-page">' +
       '<div class="ps-header">' +
         '<div class="ps-wordmark">The <em>Collection</em></div>' +
         '<div class="ps-contact">' +
@@ -1882,12 +1882,22 @@ function printItem(id) {
           '<div class="ps-contact-detail">robert_palme@me.com<br>WhatsApp Only &nbsp;+1&nbsp;562&nbsp;852&nbsp;4798</div>' +
         '</div>' +
       '</div>' +
-      heroHtml +
-      '<div class="ps-photo-strip">' + thumbCells + '</div>' +
-    '</div>';
+      '<div class="ps-hero-wrap">' + heroHtml + '</div>' +
+      (thumbImgs.length ? '<div class="ps-photo-strip" style="grid-template-columns:repeat(' + thumbImgs.length + ',1fr)">' + thumbCells + '</div>' : '');
+  var st = item.status || 'draft';
   var price = item.soldPrice || item.price;
-  var priceLabel = item.status === 'sold' ? 'Sold Price' : 'Asking Price';
-  var fmtPrice = price ? '$' + Number(price).toLocaleString('en-US') : 'Price on Request';
+  var priceLabel, fmtPrice;
+  if (st === 'stash') {
+    priceLabel = 'Purchase Price';
+    fmtPrice = item.cost ? fmtCost(item.cost, item.costCurrency) : '';
+  } else if (st === 'wishlist') {
+    priceLabel = 'Target Price';
+    fmtPrice = item.price ? '$' + Number(item.price).toLocaleString('en-US') : '';
+  } else {
+    priceLabel = st === 'sold' ? 'Sold Price' : 'Asking Price';
+    fmtPrice = price ? '$' + Number(price).toLocaleString('en-US') : 'Price on Request';
+  }
+  var forSaleStatus = (st === 'draft' || st === 'active' || st === 'hold');
   var featsHtml = '';
   if (item.features && item.features.trim()) {
     var featLines = item.features.trim().split('\n').filter(function(l){ return l.trim(); });
@@ -1917,14 +1927,14 @@ function printItem(id) {
     hasSpec = true;
   });
   if (item.dimensions) { specsHtml += '<div class="ps-spec full"><strong>Dimensions:</strong> ' + item.dimensions + '</div>'; hasSpec = true; }
-  if (item.purchased)  { specsHtml += '<div class="ps-spec full"><strong>Purchased:</strong> ' + item.purchased + '</div>'; hasSpec = true; }
+  if (item.purchased && st !== 'wishlist')  { specsHtml += '<div class="ps-spec full"><strong>Purchased:</strong> ' + item.purchased + '</div>'; hasSpec = true; }
   specsHtml += '</div>';
   if (!hasSpec) specsHtml = '';
   var badgesHtml = '';
-  if (item.receipt)  badgesHtml += '<span class="ps-badge receipt">Original Receipt on Hand</span>';
-  if (item.acquired) badgesHtml += '<span class="ps-badge">Acquired ' + fmtDate(item.acquired) + '</span>';
+  if (item.receipt && st !== 'wishlist')  badgesHtml += '<span class="ps-badge receipt">Original Receipt on Hand</span>';
+  if (item.acquired && st !== 'wishlist') badgesHtml += '<span class="ps-badge">Acquired ' + fmtDate(item.acquired) + '</span>';
   var page2 =
-    '<div class="ps-page2">' +
+    '<div class="ps-body">' +
       (item.category ? '<div class="ps-category">' + item.category + '</div>' : '') +
       '<div class="ps-item-name">' + (item.name || '') + '</div>' +
       (item.brand ? '<div class="ps-brand">' + item.brand + '</div>' : '') +
@@ -1933,24 +1943,34 @@ function printItem(id) {
       featsHtml + condHtml + specsHtml +
       '<div class="ps-price-row">' +
         '<div class="ps-price-left">' +
-          '<div class="ps-price">' + fmtPrice + '</div>' +
-          '<div class="ps-price-label">' + priceLabel + '</div>' +
+          (fmtPrice ? '<div class="ps-price">' + fmtPrice + '</div>' +
+          '<div class="ps-price-label">' + priceLabel + '</div>' : '') +
         '</div>' +
         '<div class="ps-badges">' + badgesHtml + '</div>' +
       '</div>' +
       '<div class="ps-footer">' +
         '<div class="ps-footer-tagline">Authenticated &middot; Curated &middot; Provenance</div>' +
-        '<div class="ps-footer-appt">Available for in-person or FaceTime viewing by appointment.</div>' +
+        (forSaleStatus ? '<div class="ps-footer-appt">Available for in-person or FaceTime viewing by appointment.</div>' : '') +
       '</div>' +
     '</div>';
-  document.getElementById('print-content').innerHTML = page1 + page2;
+  document.getElementById('print-content').innerHTML = page1 + page2 + '</div>';
   var allImgs = document.getElementById('print-content').querySelectorAll('img');
-  if (!allImgs.length) { window.print(); return; }
+  var fitSheet = function() {
+    // Measure while hidden-but-laid-out, then shrink the text block until everything fits on one page.
+    var sheet = document.getElementById('print-sheet');
+    var prev = sheet.getAttribute('style');
+    sheet.setAttribute('style', 'display:block;position:absolute;left:-9999px;top:0;visibility:hidden');
+    var page = sheet.querySelector('.ps-page'), body = sheet.querySelector('.ps-body');
+    var z = 1;
+    while (page && body && page.scrollHeight > page.clientHeight + 1 && z > 0.6) { z -= 0.04; body.style.zoom = z; }
+    if (prev === null) sheet.removeAttribute('style'); else sheet.setAttribute('style', prev);
+  };
+  if (!allImgs.length) { fitSheet(); window.print(); return; }
   var loaded = 0;
   var total = allImgs.length;
   function onImgSettled() {
     loaded++;
-    if (loaded >= total) window.print();
+    if (loaded >= total) { fitSheet(); window.print(); }
   }
   allImgs.forEach(function(img) {
     if (img.complete) { onImgSettled(); }
