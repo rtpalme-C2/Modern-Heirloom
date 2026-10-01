@@ -1250,21 +1250,18 @@ let filterCategory = '';
 
 // ── TABS ───────────────────────────────────────────────────────────────────
 const TAB_DEFS = [
-  { id:'forsale',    label:'For sale',   statuses:['draft','active','hold'], newStatus:'draft',
-    empty:['Nothing for sale yet', 'Add a piece and set it to Draft or Active.'] },
   { id:'collection', label:'Collection', statuses:['stash'],                 newStatus:'stash',
     empty:['Your collection is empty', 'Tap + Add Item to add a piece you own and keep.'] },
   { id:'wishlist',   label:'Wishlist',   statuses:['wishlist'],              newStatus:'wishlist',
     empty:['Your wishlist is empty', "Tap + Add Item to save a piece you'd like to find."] },
+  { id:'forsale',    label:'For sale',   statuses:['draft','active','hold'], newStatus:'draft',
+    empty:['Nothing for sale yet', 'Add a piece and set it to Draft or Active.'] },
   { id:'sold',       label:'Sold',       statuses:['sold'],                  newStatus:'sold',
     empty:['No sold pieces yet', 'Pieces you mark as Sold appear here.'] }
 ];
 let currentTab = 'collection';
 let tabChosen  = false;
-try {
-  const t = localStorage.getItem('tc-tab');
-  if (TAB_DEFS.some(function(d) { return d.id === t; })) { currentTab = t; tabChosen = true; }
-} catch(e) {}
+// The app always opens on Collection.
 
 function tabOf(status) {
   const st = status || 'draft';
@@ -1272,11 +1269,11 @@ function tabOf(status) {
   return t ? t.id : 'forsale';
 }
 function tabLabel(id) { const t = TAB_DEFS.find(function(d) { return d.id === id; }); return t ? t.label : id; }
-function rememberTab() { tabChosen = true; try { localStorage.setItem('tc-tab', currentTab); } catch(e) {} }
+function rememberTab() { tabChosen = true; }
 
-// Until the user picks a tab, open the first one that has something in it.
+// Kept for structure: the app always opens on Collection, so there is nothing to pick.
 function autoPickTab() {
-  if (tabChosen) return;
+  return;
   const order = ['collection', 'forsale', 'wishlist', 'sold'];
   const t = order.find(function(id) { return items.some(function(i) { return tabOf(i.status) === id; }); });
   if (t) currentTab = t;
@@ -1863,6 +1860,88 @@ window.addEventListener('beforeunload', e => {
 });
 
 
+function isStandaloneApp() {
+  try {
+    if (/[?&]pdfmode=file/.test(location.search)) return true;
+    return window.navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  } catch (e) { return false; }
+}
+function loadScriptOnce(src) {
+  return new Promise(function(resolve, reject) {
+    var el = document.createElement('script');
+    el.src = src; el.onload = resolve;
+    el.onerror = function() { reject(new Error('Could not load ' + src)); };
+    document.head.appendChild(el);
+  });
+}
+function closePdfReady() { var o = document.getElementById('pdf-ready'); if (o) o.remove(); }
+function showPdfReady(blob, filename) {
+  closePdfReady();
+  var url = URL.createObjectURL(blob);
+  var o = document.createElement('div');
+  o.id = 'pdf-ready';
+  o.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(28,8,16,.55);display:flex;align-items:center;justify-content:center;padding:24px';
+  o.innerHTML = '<div style="background:#fff;border-radius:16px;padding:24px;max-width:340px;width:100%;text-align:center;font-family:\'Plus Jakarta Sans\',sans-serif">' +
+    '<div style="font-size:16px;font-weight:600;color:#1C0810;margin-bottom:6px">PDF ready</div>' +
+    '<div style="font-size:12px;color:#6b5b60;margin-bottom:18px;word-break:break-word">' + filename + '</div>' +
+    '<button id="pdf-share-btn" style="width:100%;padding:12px;border:none;border-radius:10px;background:#1C0810;color:#DCC9A6;font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;margin-bottom:10px">Share / Save PDF</button>' +
+    '<a id="pdf-open-link" href="' + url + '" target="_blank" rel="noopener" style="display:block;padding:10px;font-size:12px;color:#8B2040;text-decoration:none">Open PDF</a>' +
+    '<button id="pdf-close-btn" style="padding:8px;border:none;background:none;color:#6b5b60;font-family:inherit;font-size:12px;cursor:pointer">Close</button></div>';
+  document.body.appendChild(o);
+  document.getElementById('pdf-close-btn').onclick = closePdfReady;
+  document.getElementById('pdf-share-btn').onclick = function() {
+    var file = new File([blob], filename, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+      navigator.share({ files: [file], title: filename }).catch(function() {});
+    } else {
+      window.open(url, '_blank');
+    }
+  };
+}
+async function makePdfFile(item) {
+  showToast('Preparing PDF…');
+  var sheet = document.getElementById('print-sheet');
+  var prev = sheet.getAttribute('style');
+  try {
+    if (!window.html2canvas) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    if (!window.jspdf) await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+    sheet.setAttribute('style', 'display:block;position:fixed;left:-10000px;top:0;width:8.5in');
+    var page = sheet.querySelector('.ps-page');
+    var canvas = await window.html2canvas(page, {
+      scale: 2, useCORS: true, backgroundColor: '#ffffff', imageTimeout: 20000, logging: false,
+      onclone: function(doc) {
+        // CSS zoom confuses html2canvas; use an equivalent transform in the copy it draws.
+        var bd = doc.querySelector('.ps-body');
+        if (bd && bd.getAttribute('data-z') && Number(bd.getAttribute('data-z')) < 1) {
+          var zz = Number(bd.getAttribute('data-z'));
+          bd.style.zoom = ''; bd.style.transformOrigin = 'top left'; bd.style.transform = 'scale(' + zz + ')'; bd.style.width = (100 / zz) + '%';
+        }
+        // html2canvas handles background images more reliably than object-fit, so swap photos for cover backgrounds.
+        doc.querySelectorAll('.ps-hero, .ps-photo-strip img').forEach(function(img) {
+          var d = doc.createElement('div');
+          d.style.cssText = 'background:url("' + img.getAttribute('src') + '") center/cover no-repeat;width:100%;height:' + (img.classList.contains('ps-hero') ? '100%' : '.95in');
+          if (img.classList.contains('ps-hero')) d.style.cssText += ';position:absolute;left:0;top:0';
+          img.replaceWith(d);
+        });
+      }
+    });
+    var jsPDF = window.jspdf.jsPDF;
+    var h = 8.5 * canvas.height / canvas.width;
+    var pdf = new jsPDF({ unit: 'in', format: 'letter', orientation: 'portrait' });
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 8.5, Math.min(h, 11));
+    var name = (item.name || 'Sales Sheet').replace(/[^\w\-\s]+/g, '').trim().replace(/\s+/g, '-').slice(0, 60) || 'Sales-Sheet';
+    showPdfReady(pdf.output('blob'), name + '.pdf');
+    showToast('PDF ready');
+  } catch (e) {
+    console.error(e);
+    showToast('Could not create the PDF: ' + (e && e.message ? e.message : e), true);
+  } finally {
+    if (prev === null) sheet.removeAttribute('style'); else sheet.setAttribute('style', prev);
+  }
+}
+function deliverSheet(item) {
+  if (isStandaloneApp()) makePdfFile(item); else window.print();
+}
 function printItem(id) {
   var item = items.find(function(i){ return i.id === id; });
   if (!item) return;
@@ -1960,14 +2039,15 @@ function printItem(id) {
     var page = sheet.querySelector('.ps-page'), body = sheet.querySelector('.ps-body');
     var z = 1;
     while (page && body && page.scrollHeight > page.clientHeight + 1 && z > 0.6) { z -= 0.04; body.style.zoom = z; }
+    if (body) body.setAttribute('data-z', String(z));
     if (prev === null) sheet.removeAttribute('style'); else sheet.setAttribute('style', prev);
   };
-  if (!allImgs.length) { fitSheet(); window.print(); return; }
+  if (!allImgs.length) { fitSheet(); deliverSheet(item); return; }
   var loaded = 0;
   var total = allImgs.length;
   function onImgSettled() {
     loaded++;
-    if (loaded >= total) { fitSheet(); window.print(); }
+    if (loaded >= total) { fitSheet(); deliverSheet(item); }
   }
   allImgs.forEach(function(img) {
     if (img.complete) { onImgSettled(); }
