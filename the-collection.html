@@ -999,7 +999,7 @@ const GH_SEED_FILE = 'modern-heirloom-inventory.json';   // one-time import sour
 const GH_RAW_URL  = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_FILE}`;
 const GH_API_URL  = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
 const GH_SEED_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_SEED_FILE}`;
-const LS_PAT      = 'mh_gh_pat';
+const LS_PAT      = 'tc_gh_pat';
 const LS_SHA      = 'tc_gh_sha';
 const LS_DATA_KEY = 'tc-v1';
 
@@ -1009,6 +1009,10 @@ const DATA_VERSION = 1;
 
 let saveTimer   = null;
 let pendingSave = false;
+let remoteReady  = false;  // true once the remote file has been read (or confirmed missing/empty)
+let localTrusted = false;  // true when this device started with real cached data (not seed/empty)
+function pushAllowed() { return remoteReady || localTrusted; }
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ════════════════════════════════════════════════════════════════════
 //  PAT / SHA HELPERS
@@ -1091,6 +1095,7 @@ async function syncFromGitHub() {
     const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
     // 404 means file doesn't exist yet — push local data up to create it
     if (res.status === 404) {
+      remoteReady = true;
       setSyncStatus('saving', 'Creating data file on GitHub…');
       await seedFromOldFile();
       await saveToGitHub();
@@ -1098,8 +1103,10 @@ async function syncFromGitHub() {
     }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
+    if (!text || !text.trim()) remoteReady = true;
     if (text && text.trim().startsWith('{')) {
       const parsed = JSON.parse(text);
+      remoteReady = true;
       const hasData = parsed && parsed._version === DATA_VERSION &&
         Array.isArray(parsed.items) && parsed.items.length > 0;
       if (hasData) {
@@ -1150,13 +1157,14 @@ async function fetchSHA() {
 
 async function saveToGitHub() {
   if (!configOk()) return;
+  if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   setSyncStatus('saving', 'Saving to GitHub…');
   pendingSave = true;
   try {
     await fetchSHA();
     const payload = { _version: DATA_VERSION, items };
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-    const body = { message: 'The Collection update · ' + new Date().toISOString().slice(0,10), content };
+    const body = { message: 'The Collection update · ' + localISO(new Date()), content };
     if (getSHA()) body.sha = getSHA();
     const res = await fetch(GH_API_URL, {
       method: 'PUT',
@@ -1189,6 +1197,7 @@ function persist() {
 function scheduleSave() {
   persist();
   if (!configOk()) return;
+  if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveToGitHub, 1200);
 }
@@ -1545,8 +1554,8 @@ function renderGrid() {
       '</svg>' +
       '<div class="card-top-content">' +
       (badgeRow ? '<div class="card-channel-badges">' + badgeRow + '</div>' : '') +
-      '<div class="card-item-name">' + (item.name || 'Untitled') + '</div>' +
-      '<div class="card-item-brand">' + (item.brand || '') + '</div>' +
+      '<div class="card-item-name">' + esc(item.name || 'Untitled') + '</div>' +
+      '<div class="card-item-brand">' + esc(item.brand || '') + '</div>' +
       '</div>' +
       '<span class="card-status-badge ' + (statusCls[item.status]||'status-draft') + '">' + (statusLabel[item.status]||'Draft') + '</span>' +
             '</div>' +
@@ -1712,7 +1721,7 @@ function renderPriceHistory() {
         <div class="ph-info">
           <span style="font-weight:500">${fmt(ph.price)}</span>
           <span style="color:var(--text-faint)">${ph.date}</span>
-          ${ph.note ? `<span style="color:var(--text-dim)">${ph.note}</span>` : ''}
+          ${ph.note ? `<span style="color:var(--text-dim)">${esc(ph.note)}</span>` : ''}
           ${changeBadge}
         </div>
         <button class="ph-del" onclick="removePriceRow(${i})">×</button>
@@ -1757,6 +1766,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadLocal();
+  localTrusted = items.length > 0;
   render();
   updateSetupBanner();
 
@@ -1812,9 +1822,9 @@ function renderImageList() {
   if (!pendingImages.length) { list.innerHTML = ''; return; }
   list.innerHTML = pendingImages.map((url, i) => `
     <div class="img-item">
-      <img class="img-thumb" src="${url}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="">
+      <img class="img-thumb" src="${esc(url)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="">
       <div class="img-thumb-placeholder" style="display:none">🖼</div>
-      <span class="img-url">${url}</span>
+      <span class="img-url">${esc(url)}</span>
       <button class="img-del" onclick="removeImageUrl(${i})">×</button>
     </div>`).join('');
 }
@@ -1979,7 +1989,7 @@ function printItem(id) {
   var condHtml = '';
   if (item.condition || item.accompanied) {
     condHtml = '<div class="ps-condition">';
-    if (item.condition)   condHtml += '<p><strong>Condition:</strong> ' + item.condition + '</p>';
+    if (item.condition)   condHtml += '<p><strong>Condition:</strong> ' + esc(item.condition) + '</p>';
     if (item.accompanied) condHtml += '<p><strong>Accompanied by:</strong> ' + item.accompanied + '</p>';
     condHtml += '</div>';
   }
@@ -2005,10 +2015,10 @@ function printItem(id) {
   var page2 =
     '<div class="ps-body">' +
       (item.category ? '<div class="ps-category">' + item.category + '</div>' : '') +
-      '<div class="ps-item-name">' + (item.name || '') + '</div>' +
-      (item.brand ? '<div class="ps-brand">' + item.brand + '</div>' : '') +
+      '<div class="ps-item-name">' + esc(item.name || '') + '</div>' +
+      (item.brand ? '<div class="ps-brand">' + esc(item.brand) + '</div>' : '') +
       '<div class="ps-divider"></div>' +
-      (item.notes ? '<div class="ps-description">' + item.notes + '</div>' : '') +
+      (item.notes ? '<div class="ps-description">' + esc(item.notes) + '</div>' : '') +
       featsHtml + condHtml + specsHtml +
       '<div class="ps-price-row">' +
         '<div class="ps-price-left">' +
