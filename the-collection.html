@@ -45,6 +45,7 @@ body{
   color:var(--text-main);
   min-height:100vh;
 }
+strong{font-weight:500}
 
 /* ── HEADER ── */
 header{
@@ -64,10 +65,6 @@ header{
   margin-bottom:6px;
 }
 .hdr-name em{font-style:italic;font-weight:200;color:var(--mh-rose)}
-.hdr-tagline{
-  font-size:0.46875rem;letter-spacing:.16em;text-transform:uppercase;
-  color:rgba(242,237,232,.35);font-weight:300;margin-top:10px;
-}
 .hdr-accent{
   position:absolute;bottom:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--mh-rose) 20%,var(--mh-rose) 80%,transparent);
@@ -98,7 +95,6 @@ header{
   background:#F8F2E4;border:1.5px solid rgba(220,201,166,.35);border-radius:4px;
   font-size:.8rem;line-height:1.6;color:#5a1828;
 }
-.config-notice strong{display:block;margin-bottom:4px;font-size:.85rem}
 .config-notice code{
   background:rgba(220,201,166,.4);padding:1px 6px;border-radius:4px;
   font-family:monospace;font-size:.78rem;
@@ -623,7 +619,6 @@ header{
 .ps-badge{font-size:0.5rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:20px;white-space:nowrap;border:1px solid #1a1a1a;color:#1a1a1a}
 .ps-badge.receipt{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
 .ps-footer{border-top:1px solid #ddd;padding-top:8px;display:flex;justify-content:flex-end;align-items:center}
-.ps-footer-tagline{font-size:0.5rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#888}
 .ps-footer-appt{font-size:0.53125rem;color:#5c1a2e;font-style:italic;font-family:'Plus Jakarta Sans',sans-serif}
 .card-footer-actions{display:flex;justify-content:flex-end;padding:6px 14px 10px;border-top:1px solid var(--mh-petal-dim)}
 .card-print-btn{background:transparent;border:1px solid var(--mh-petal-dim);border-radius:8px;color:var(--text-dim);padding:4px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;transition:all .18s}
@@ -703,7 +698,6 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
     </div>
     <div class="hdr-text">
       <div class="hdr-name">The <em>Collection</em></div>
-      <div class="hdr-tagline">A Personal Catalogue</div>
     </div>
     <button class="sync-chip" id="sync-chip" type="button" onclick="toggleSyncPanel(event)" title="Not connected to GitHub"><span class="sync-dot" id="sync-dot-chip"></span><span id="sync-chip-label">Not connected</span></button>
   </div>
@@ -1689,11 +1683,12 @@ function deleteItem() {
 }
 
 // ── PRICE HISTORY ──────────────────────────────────────────────────────────
+function localISO(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function addPriceRow() {
   const priceVal = document.getElementById('ph-price-input').value;
   const noteVal  = document.getElementById('ph-note-input').value.trim();
   if (!priceVal) { document.getElementById('ph-price-input').focus(); return; }
-  pendingPriceHistory.push({ date: new Date().toISOString().slice(0,10), price: Number(priceVal), note: noteVal });
+  pendingPriceHistory.push({ date: localISO(new Date()), price: Number(priceVal), note: noteVal });
   document.getElementById('ph-price-input').value = '';
   document.getElementById('ph-note-input').value  = '';
   renderPriceHistory();
