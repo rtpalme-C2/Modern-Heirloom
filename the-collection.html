@@ -769,6 +769,8 @@ body.view-mode .sort-wrap,body.view-mode .chips,body.view-mode .results-note{dis
         <select class="filter-select" id="filter-ptype"><option value="">All</option><option value="new">New</option><option value="preowned">Pre-Owned</option></select></div>
       <div class="fr" id="fr-condition"><label>Condition</label>
         <select class="filter-select" id="filter-condition"><option value="">All</option><option value="new">New</option><option value="likenew">Like New</option><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select></div>
+      <div class="fr" id="fr-source"><label>Source</label>
+        <select class="filter-select" id="filter-source"><option value="">All sources</option><option value="Retail">Retail</option><option value="Outlet">Outlet</option><option value="Resale">Resale</option><option value="Gift">Gift</option></select></div>
       <div class="fr" id="fr-size"><label>Size</label>
         <select class="filter-select" id="filter-size"><option value="">All sizes</option><option value="Mini">Mini</option><option value="Small">Small</option><option value="Medium">Medium</option><option value="Large">Large</option><option value="Extra Large">Extra Large</option></select></div>
       <div class="fr" id="fr-category"><label>Category</label>
@@ -1396,7 +1398,7 @@ function resetInapplicableFilters() {
   const set = function(id) { const el = document.getElementById(id); if (el) el.value = ''; };
   if (currentTab !== 'forsale')                          { filterStatus  = ''; set('filter-status'); }
   if (currentTab !== 'forsale' && currentTab !== 'sold') { filterChannel = ''; set('filter-channel'); }
-  if (currentTab === 'wishlist')                         { filterPType   = ''; set('filter-ptype'); filterCondition = ''; set('filter-condition'); }
+  if (currentTab === 'wishlist')                         { filterPType   = ''; set('filter-ptype'); filterCondition = ''; set('filter-condition'); filterSource = ''; set('filter-source'); }
   if (currentTab !== 'sold')                             { filterYearSold = ''; set('filter-yearsold'); }
 }
 function setTab(id) { currentTab = id; rememberTab(); resetInapplicableFilters(); render(); }
@@ -1425,10 +1427,12 @@ function updateFilterUI() {
   show('fr-channel', currentTab === 'forsale' || currentTab === 'sold');
   show('fr-ptype',   currentTab !== 'wishlist');
   show('fr-condition', currentTab !== 'wishlist');
+  show('fr-source', currentTab !== 'wishlist');
   show('fr-yearsold', currentTab === 'sold');
   let n = 0;
   if (filterCategory) n++;
   if (filterSize) n++;
+  if (currentTab !== 'wishlist' && filterSource) n++;
   if (currentTab !== 'wishlist' && filterCondition) n++;
   if (filterBrand) n++;
   if (filterYear) n++;
@@ -1440,8 +1444,8 @@ function updateFilterUI() {
   if (btn) btn.textContent = n ? 'Filters · ' + n : 'Filters';
 }
 function clearFilters() {
-  filterStatus = ''; filterChannel = ''; filterPType = ''; filterCategory = ''; filterBrand = ''; filterYear = ''; filterYearSold = ''; filterCondition = ''; filterSize = '';
-  ['filter-status', 'filter-channel', 'filter-ptype', 'filter-condition', 'filter-size', 'filter-category', 'filter-brand', 'filter-year', 'filter-yearsold'].forEach(function(id) { const el = document.getElementById(id); if (el) el.value = ''; });
+  filterStatus = ''; filterChannel = ''; filterPType = ''; filterCategory = ''; filterBrand = ''; filterYear = ''; filterYearSold = ''; filterCondition = ''; filterSize = ''; filterSource = '';
+  ['filter-status', 'filter-channel', 'filter-ptype', 'filter-condition', 'filter-source', 'filter-size', 'filter-category', 'filter-brand', 'filter-year', 'filter-yearsold'].forEach(function(id) { const el = document.getElementById(id); if (el) el.value = ''; });
   renderGrid();
 }
 function closePopovers() {
@@ -1522,6 +1526,13 @@ const SIZE_OVERRIDES = { mnksi5ads88s: 'Small', muot03n4l0s3: 'Large', mni60ftvs
 function migrateItems() {
   let changed = false;
   items.forEach(function(it) {
+    // Money is stored as numbers; empty means "not entered" (null), never "" or a text amount.
+    ['cost', 'costUSD', 'price', 'soldPrice'].forEach(function(k) {
+      if (k in it && typeof it[k] !== 'number' && it[k] !== null) { it[k] = numOrNull(it[k]); changed = true; }
+    });
+    if (Array.isArray(it.priceHistory)) it.priceHistory.forEach(function(ph) {
+      if (ph && typeof ph.price === 'string') { const n = numOrNull(ph.price); if (n != null) { ph.price = n; changed = true; } }
+    });
     if (it.modelSize === undefined) {
       // Size is now a size class; the brand's own size name (GM, Cabine) moves to Model size.
       const old = String(it.size || '').trim();
@@ -1596,7 +1607,7 @@ function migrateItems() {
   });
   return changed;
 }
-let filterBrand = '', filterYear = '', filterYearSold = '', filterCondition = '', filterSize = '';
+let filterBrand = '', filterYear = '', filterYearSold = '', filterCondition = '', filterSize = '', filterSource = '';
 const BRAND_STARTERS = ['Coach', 'Hermès', 'Louis Vuitton', 'Loro Piana'];
 
 
@@ -1754,6 +1765,7 @@ function getVisible() {
     if (filterCategory && item.category !== filterCategory) return false;
     if (filterCondition && item.conditionGrade !== filterCondition) return false;
     if (filterSize && item.size !== filterSize) return false;
+    if (filterSource && item.source !== filterSource) return false;
     if (filterBrand && brandKey(item.brand) !== filterBrand) return false;
     if (filterYear && yearOf(item.acquired) !== filterYear) return false;
     if (filterYearSold && yearOf(item.soldDate) !== filterYearSold) return false;
@@ -1821,6 +1833,7 @@ function renderChips(shown, total) {
   if (currentTab !== 'wishlist' && filterPType) add('ptype', ptLabel[filterPType] || filterPType);
   if (currentTab !== 'wishlist' && filterCondition) add('condition', 'Condition: ' + conditionLabel(filterCondition));
   if (filterSize) add('size', 'Size: ' + filterSize);
+  if (currentTab !== 'wishlist' && filterSource) add('source', 'Source: ' + filterSource);
   if (filterCategory) add('category', filterCategory);
   if (filterBrand) add('brand', map[filterBrand] || filterBrand);
   if (filterYear) add('year', 'Acquired ' + filterYear);
@@ -1838,6 +1851,7 @@ function removeFilter(key) {
   if (key === 'ptype')    { filterPType = '';     set('filter-ptype'); }
   if (key === 'condition') { filterCondition = ''; set('filter-condition'); }
   if (key === 'size')     { filterSize = '';      set('filter-size'); }
+  if (key === 'source')   { filterSource = '';    set('filter-source'); }
   if (key === 'category') { filterCategory = '';  set('filter-category'); }
   if (key === 'brand')    { filterBrand = '';     set('filter-brand'); }
   if (key === 'year')     { filterYear = '';      set('filter-year'); }
@@ -2009,14 +2023,14 @@ function openModal(id) {
   document.getElementById('f-made-in').value     = item ? (item.madeIn || '')      : '';
   document.getElementById('f-purchased').value   = item ? (item.purchased || '')   : '';
   document.getElementById('f-dimensions').value  = item ? (item.dimensions || '')  : '';
-  document.getElementById('f-cost').value        = item ? (item.cost || '')      : '';
-  document.getElementById('f-price').value       = item ? (item.price || '')     : '';
-  document.getElementById('f-sold-price').value  = item ? (item.soldPrice || '') : '';
+  document.getElementById('f-cost').value        = item ? (item.cost ?? '')      : '';
+  document.getElementById('f-price').value       = item ? (item.price ?? '')     : '';
+  document.getElementById('f-sold-price').value  = item ? (item.soldPrice ?? '') : '';
   document.getElementById('f-status').value      = item ? (item.status || 'draft') : defaultStatusForTab();
   document.getElementById('f-ptype').value       = item ? (item.purchaseType || '') : '';
   document.getElementById('f-acquired').value    = item ? (item.acquired || '')  : '';
   document.getElementById('f-cost-currency').value = item ? (item.costCurrency || 'USD') : 'USD';
-  document.getElementById('f-cost-usd').value    = item ? (item.costUSD || '')   : '';
+  document.getElementById('f-cost-usd').value    = item ? (item.costUSD ?? '')   : '';
   document.getElementById('f-sold-date').value   = item ? (item.soldDate || '')  : '';
   document.getElementById('f-receipt').checked   = item ? !!item.receipt : false;
 
@@ -2067,12 +2081,12 @@ function saveItem() {
     madeIn:       document.getElementById('f-made-in').value.trim(),
     purchased:    document.getElementById('f-purchased').value.trim(),
     dimensions:   document.getElementById('f-dimensions').value.trim(),
-    cost:         document.getElementById('f-cost').value || '',
+    cost:         numOrNull(document.getElementById('f-cost').value),
     costCurrency: document.getElementById('f-cost-currency').value || 'USD',
-    costUSD:      document.getElementById('f-cost-currency').value !== 'USD' ? (document.getElementById('f-cost-usd').value || '') : '',
+    costUSD:      document.getElementById('f-cost-currency').value !== 'USD' ? numOrNull(document.getElementById('f-cost-usd').value) : null,
     soldDate:     document.getElementById('f-sold-date').value || '',
-    price:        document.getElementById('f-price').value || '',
-    soldPrice:    document.getElementById('f-sold-price').value || '',
+    price:        numOrNull(document.getElementById('f-price').value),
+    soldPrice:    numOrNull(document.getElementById('f-sold-price').value),
     status, channels,
     purchaseType: document.getElementById('f-ptype').value,
     acquired:     document.getElementById('f-acquired').value,
@@ -2219,6 +2233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('filter-category').addEventListener('change', e => { filterCategory = e.target.value; renderGrid(); });
   document.getElementById('filter-condition').addEventListener('change', e => { filterCondition = e.target.value; renderGrid(); });
   document.getElementById('filter-size').addEventListener('change', e => { filterSize = e.target.value; renderGrid(); });
+  document.getElementById('filter-source').addEventListener('change', e => { filterSource = e.target.value; renderGrid(); });
   document.getElementById('filter-brand').addEventListener('change', e => { filterBrand = e.target.value; renderGrid(); });
   document.getElementById('filter-year').addEventListener('change', e => { filterYear = e.target.value; renderGrid(); });
   document.getElementById('filter-yearsold').addEventListener('change', e => { filterYearSold = e.target.value; renderGrid(); });
