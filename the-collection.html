@@ -143,13 +143,13 @@ header{
 /* ── STATS ── */
 .stats-row{
   padding:20px 40px 0;
-  display:flex;gap:12px;flex-wrap:wrap;
+  display:grid;gap:12px;grid-template-columns:repeat(auto-fill,160px);grid-auto-rows:1fr;
 }
 .stat-pill{
   background:var(--card-bg);border:1px solid var(--border);
   border-radius:12px;padding:12px 18px;
   display:flex;flex-direction:column;gap:3px;
-  min-width:100px;
+  min-width:0;
 }
 .stat-label{font-size:0.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);font-weight:500}
 .stat-value{font-size:1.2rem;font-weight:500;color:var(--text-main);letter-spacing:-.02em}
@@ -438,7 +438,7 @@ header{
   .hdr-inner{gap:14px}
   .hdr-mark svg{width:52px;height:34px}
   .stats-row{padding:14px 24px 0;gap:8px}
-  .stat-pill{padding:10px 14px;min-width:80px}
+  .stat-pill{padding:10px 14px}
   .toolbar{padding:14px 24px 0;gap:8px}
   .items-wrap{padding:14px 24px 60px}
   .items-grid{grid-template-columns:1fr}
@@ -447,8 +447,8 @@ header{
   header{padding:22px 16px 20px}
   .hdr-inner{gap:12px}
   .hdr-mark svg{width:44px;height:28px}
-  .stats-row{padding:12px 16px 0}
-  .stat-pill{min-width:72px;padding:8px 12px}
+  .stats-row{padding:12px 16px 0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat-pill{padding:8px 12px}
   .toolbar{padding:12px 16px 0}
   .search-wrap{min-width:0}
   .items-wrap{padding:12px 16px 60px}
@@ -678,7 +678,22 @@ body.view-mode .toolbar{justify-content:flex-start}
 .fr-clear{align-self:flex-start;font-family:inherit;font-size:0.6875rem;letter-spacing:.06em;text-transform:uppercase;font-weight:500;background:none;border:none;color:var(--mh-accent);cursor:pointer;padding:2px 0}
 body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,body.view-mode .stats-row,body.view-mode .filters-wrap{display:none!important}
 @media(max-width:768px){.tab-bar{padding:0 24px}.config-notice{margin:12px 24px 0}}
-@media(max-width:480px){.tab-bar{padding:0 12px}.config-notice{margin:12px 16px 0}#sync-chip-label{display:none}.sync-chip{padding:8px}.search-wrap{flex:1 1 100%!important;min-width:100%!important}#filter-category{flex:1;min-width:0}}
+@media(max-width:480px){.tab-bar{padding:0 12px}.config-notice{margin:12px 16px 0}#sync-chip-label{display:none}.sync-chip{padding:8px}.search-wrap{flex:1 1 100%!important;min-width:100%!important}}
+
+/* ── SUMMARY NOTES / SORT / CHIPS ── */
+.stat-note{font-size:0.5625rem;color:var(--text-dim);margin-top:2px;line-height:1.35}
+.sort-wrap{display:flex;gap:6px;align-items:center}
+.sort-wrap .filter-select{max-width:170px}
+.sort-dir{font-family:inherit;font-size:0.8125rem;line-height:1;background:#fff;border:1px solid rgba(26,24,20,.12);color:var(--text-mid);padding:9px 12px;border-radius:8px;cursor:pointer;transition:border-color .15s}
+.sort-dir:hover{border-color:rgba(200,169,110,.5)}
+.filters-pop{max-height:70vh;overflow-y:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 40px 0}
+.chip{font-family:inherit;font-size:0.6875rem;letter-spacing:.02em;background:#fff;border:1px solid rgba(139,32,64,.28);color:var(--mh-accent);padding:5px 10px;border-radius:20px;cursor:pointer;transition:background .15s}
+.chip:hover{background:rgba(139,32,64,.06)}
+.results-note{padding:10px 40px 0;font-size:0.6875rem;color:var(--text-dim);letter-spacing:.02em}
+body.view-mode .sort-wrap,body.view-mode .chips,body.view-mode .results-note{display:none!important}
+@media(max-width:768px){.chips,.results-note{padding-left:24px;padding-right:24px}}
+@media(max-width:480px){.chips,.results-note{padding-left:16px;padding-right:16px}.sort-wrap .filter-select{max-width:none;flex:1;min-width:0}.sort-wrap{flex:1 1 auto;min-width:0}}
 </style>
 </head>
 <body>
@@ -710,6 +725,7 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
     <span id="sync-label">Not connected to GitHub</span>
   </div>
   <div class="sync-actions">
+    <button class="btn-sync" onclick="downloadBackup()">Download backup</button>
     <button class="btn-sync" onclick="resetLocalData()">Reset local data</button>
     <button class="btn-sync" id="btn-disconnect" style="display:none" onclick="disconnectGitHub()">Disconnect</button>
     <button class="btn-sync primary" id="btn-connect" onclick="openPATModal()">Connect GitHub</button>
@@ -734,7 +750,10 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
     </svg>
     <input type="text" id="search-input" placeholder="Search name, brand, product code…">
   </div>
-  <select class="filter-select" id="filter-category"><option value="">All categories</option></select>
+  <div class="sort-wrap" id="sort-wrap">
+    <select class="filter-select" id="sort-select" aria-label="Sort by"></select>
+    <button class="sort-dir" id="sort-dir" type="button" aria-label="Reverse sort order" title="Reverse sort order">↓</button>
+  </div>
   <div class="filters-wrap">
     <button class="filters-btn" id="filters-btn" type="button" onclick="toggleFilters(event)">Filters</button>
     <div class="filters-pop" id="filters-pop" onclick="event.stopPropagation()">
@@ -742,13 +761,28 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
         <select class="filter-select" id="filter-status"><option value="">All</option><option value="draft">Draft</option><option value="active">Active</option><option value="hold">Hold / Pending</option></select></div>
       <div class="fr" id="fr-channel"><label>Channel</label>
         <select class="filter-select" id="filter-channel"><option value="">All channels</option><option value="Facebook">Facebook</option><option value="1stDibs">1stDibs</option><option value="eBay">eBay</option><option value="Vestiaire">Vestiaire</option><option value="Madison Ave Couture">Madison Ave Couture</option><option value="Other">Other</option></select></div>
-      <div class="fr" id="fr-ptype"><label>Purchase type</label>
+      <div class="fr" id="fr-ptype"><label>Bought</label>
         <select class="filter-select" id="filter-ptype"><option value="">All</option><option value="new">New</option><option value="preowned">Pre-Owned</option></select></div>
+      <div class="fr" id="fr-condition"><label>Condition</label>
+        <select class="filter-select" id="filter-condition"><option value="">All</option><option value="new">New</option><option value="likenew">Like New</option><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select></div>
+      <div class="fr" id="fr-size"><label>Size</label>
+        <select class="filter-select" id="filter-size"><option value="">All sizes</option><option value="Mini">Mini</option><option value="Small">Small</option><option value="Medium">Medium</option><option value="Large">Large</option><option value="Extra Large">Extra Large</option></select></div>
+      <div class="fr" id="fr-category"><label>Category</label>
+        <select class="filter-select" id="filter-category"><option value="">All categories</option></select></div>
+      <div class="fr" id="fr-brand"><label>Brand</label>
+        <select class="filter-select" id="filter-brand"><option value="">All brands</option></select></div>
+      <div class="fr" id="fr-year"><label>Year acquired</label>
+        <select class="filter-select" id="filter-year"><option value="">All years</option></select></div>
+      <div class="fr" id="fr-yearsold"><label>Year sold</label>
+        <select class="filter-select" id="filter-yearsold"><option value="">All years</option></select></div>
       <button class="fr-clear" type="button" onclick="clearFilters()">Clear filters</button>
     </div>
   </div>
   <button class="btn-add" id="btn-add">+ Add Item</button>
 </div>
+
+<div class="chips" id="chips" style="display:none"></div>
+<div class="results-note" id="results-note" style="display:none"></div>
 
 <!-- ── STATS ── -->
 <!-- ── ITEMS ── -->
@@ -791,7 +825,7 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
             </select>
           </div>
           <div class="form-field sf-purchase">
-            <label>Purchase Type</label>
+            <label>Bought</label>
             <select id="f-ptype">
               <option value="">—</option>
               <option value="new">New</option>
@@ -807,11 +841,11 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
         <div class="form-grid">
           <div class="form-field" style="grid-column:1/-1">
             <label>Item Name</label>
-            <input type="text" id="f-name" placeholder="e.g. Louis Vuitton Neverfull MM">
+            <input type="text" id="f-name" placeholder="Model name, as the brand names it">
           </div>
           <div class="form-field">
             <label>Brand</label>
-            <input type="text" id="f-brand" placeholder="e.g. Louis Vuitton">
+            <input type="text" id="f-brand" list="brand-list" autocomplete="off" placeholder="Start typing, or pick a brand"><datalist id="brand-list"></datalist>
           </div>
           <div class="form-field">
             <label>Category</label>
@@ -819,51 +853,63 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
           </div>
           <div class="form-field" style="grid-column:1/-1">
             <label>Description</label>
-            <textarea id="f-notes" rows="6" placeholder="Product description — provenance, leather, colorway, character of the piece…"></textarea>
+            <textarea id="f-notes" rows="6" placeholder="Product description — provenance, material, color, character of the piece…"></textarea>
           </div>
           <div class="form-field" style="grid-column:1/-1">
             <label>Features (one per line)</label>
-            <textarea id="f-features" rows="4" placeholder="Large main compartment&#10;Interior back pocket with D-ring&#10;Made in France"></textarea>
+            <textarea id="f-features" rows="4" placeholder="One feature per line, e.g.&#10;Zip-top closure&#10;Inside zip pocket&#10;Detachable strap"></textarea>
+          </div>
+          <div class="form-field sf-purchase" style="grid-column:1/-1">
+            <label>Condition</label>
+            <select id="f-condition-grade"><option value="">—</option><option value="new">New</option><option value="likenew">Like New</option><option value="excellent">Excellent</option><option value="good">Good</option><option value="fair">Fair</option></select>
           </div>
           <div class="form-field" style="grid-column:1/-1">
-            <label>Condition</label>
-            <input type="text" id="f-condition" placeholder="e.g. Barely used. Recently serviced at official Hermès boutique spa.">
+            <label>Condition Notes</label>
+            <input type="text" id="f-condition" placeholder="e.g. Professionally cleaned and conditioned. Light wear on corners.">
           </div>
           <div class="form-field" style="grid-column:1/-1">
             <label>Accompanied By</label>
-            <input type="text" id="f-accompanied" placeholder="e.g. Original Hermès box, dustbag, lock, keys, clochette, original receipt.">
+            <input type="text" id="f-accompanied" placeholder="e.g. Dustbag, box, hangtag, strap, authenticity papers.">
           </div>
-          <div class="form-field">
+          <div class="form-field" style="grid-column:1/-1">
             <label>Product Code</label>
-            <input type="text" id="f-sku" placeholder="e.g. H083848CK34 or 9790">
+            <input type="text" id="f-sku" placeholder="Style or product code from the tag or receipt">
           </div>
           <div class="form-field">
             <label>Size</label>
-            <input type="text" id="f-size" placeholder="e.g. GM">
+            <select id="f-size"><option value="">—</option><option value="Mini">Mini</option><option value="Small">Small</option><option value="Medium">Medium</option><option value="Large">Large</option><option value="Extra Large">Extra Large</option></select>
+          </div>
+          <div class="form-field">
+            <label>Model Size</label>
+            <input type="text" id="f-model-size" list="model-size-list" autocomplete="off" placeholder="Brand's own size name, e.g. GM, 40"><datalist id="model-size-list"></datalist>
           </div>
           <div class="form-field">
             <label>Leather / Material</label>
-            <input type="text" id="f-material" placeholder="e.g. Veau Barenia Faubourg">
+            <input type="text" id="f-material" placeholder="As the brand names it, e.g. Natural grain leather">
           </div>
           <div class="form-field">
             <label>Hardware</label>
-            <input type="text" id="f-hardware" placeholder="e.g. Palladium">
+            <select id="f-hardware"><option value="">—</option><option value="Brass">Brass</option><option value="Gold">Gold</option><option value="Silver">Silver</option><option value="Palladium">Palladium</option><option value="Gunmetal">Gunmetal</option><option value="Black">Black</option><option value="Copper">Copper</option><option value="None">None</option><option value="Other">Other</option></select>
+          </div>
+          <div class="form-field">
+            <label>Hardware Notes</label>
+            <input type="text" id="f-hardware-note" placeholder="Optional, e.g. brand's finish name">
           </div>
           <div class="form-field">
             <label>Color / Code</label>
-            <input type="text" id="f-color" placeholder="e.g. Fauve (CK34)">
+            <input type="text" id="f-color" placeholder="Brand color name, with code if any">
           </div>
           <div class="form-field">
             <label>Origin</label>
-            <input type="text" id="f-origin" placeholder="e.g. France">
+            <input type="text" id="f-origin" placeholder="e.g. Retail, Outlet, or country made">
           </div>
           <div class="form-field sf-purchase" style="grid-column:1/-1">
             <label>Purchased</label>
-            <input type="text" id="f-purchased" placeholder="e.g. Hermès, 17 Rue de Sèvres, Paris — May 2023">
+            <input type="text" id="f-purchased" placeholder="Store or website, and city">
           </div>
           <div class="form-field" style="grid-column:1/-1">
             <label>Dimensions</label>
-            <input type="text" id="f-dimensions" placeholder='e.g. 10.25" W × 14" H × 4.5" D'>
+            <input type="text" id="f-dimensions" placeholder='e.g. 12" W × 10" H × 4" D'>
           </div>
         </div>
       </div>
@@ -884,6 +930,10 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
               <input type="number" id="f-cost" placeholder="0.00" min="0" step="0.01" style="flex:1;min-width:0">
             </div>
           </div>
+          <div class="form-field" id="f-cost-usd-wrap" style="display:none">
+            <label>Cost in USD (card statement)</label>
+            <input type="number" id="f-cost-usd" placeholder="0.00" min="0" step="0.01">
+          </div>
           <div class="form-field sf-purchase">
             <label>Date Acquired</label>
             <input type="date" id="f-acquired">
@@ -895,6 +945,10 @@ body.view-mode .sync-panel,body.view-mode .sync-chip,body.view-mode .tab-bar,bod
           <div class="form-field" id="f-sold-price-wrap" style="display:none">
             <label>Final Sold Price</label>
             <input type="number" id="f-sold-price" placeholder="0.00" min="0" step="0.01">
+          </div>
+          <div class="form-field" id="f-sold-date-wrap" style="display:none">
+            <label>Date Sold</label>
+            <input type="date" id="f-sold-date">
           </div>
         </div>
       </div>
@@ -1007,6 +1061,7 @@ const LS_DATA_KEY = 'tc-v1';
 // Bump DATA_VERSION when schema changes make old data incompatible.
 const DATA_VERSION = 1;
 
+let lastKnownCount = 0;  // item count last read from, or saved to, GitHub (used by the save guard)
 let saveTimer   = null;
 let pendingSave = false;
 let remoteReady  = false;  // true once the remote file has been read (or confirmed missing/empty)
@@ -1111,10 +1166,13 @@ async function syncFromGitHub() {
         Array.isArray(parsed.items) && parsed.items.length > 0;
       if (hasData) {
         items = parsed.items;
+        lastKnownCount = items.length;
+        const migrated = migrateItems();
         saveLocal();
         render();
         setSyncStatus('connected', 'Synced from GitHub · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
         await fetchSHA();
+        if (migrated) scheduleSave();
         return;
       }
     }
@@ -1137,6 +1195,7 @@ async function seedFromOldFile() {
     const parsed = await res.json();
     if (parsed && Array.isArray(parsed.items) && parsed.items.length) {
       items = parsed.items.map(migrateLegacyCategory);
+      migrateItems();
       saveLocal();
       render();
       showToast('Imported ' + items.length + ' items from your existing inventory');
@@ -1155,9 +1214,21 @@ async function fetchSHA() {
   } catch(e) {}
 }
 
+// Save guard: a push that would cut the list sharply is almost certainly a bad load, not a real edit.
+// Deleting items one at a time never trips it.
+function saveLooksDestructive() {
+  return lastKnownCount >= 3 && items.length < Math.ceil(lastKnownCount * 0.6);
+}
+
 async function saveToGitHub() {
   if (!configOk()) return;
   if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
+  if (saveLooksDestructive()) {
+    saveTimer = null; pendingSave = false;
+    setSyncStatus('error', 'Save blocked — item count dropped from ' + lastKnownCount + ' to ' + items.length);
+    showToast('Save blocked: this would cut your list from ' + lastKnownCount + ' to ' + items.length + ' items. GitHub was not changed. Download a backup, then use Reset local data.', true);
+    return;
+  }
   setSyncStatus('saving', 'Saving to GitHub…');
   pendingSave = true;
   try {
@@ -1180,6 +1251,7 @@ async function saveToGitHub() {
     if (result.content && result.content.sha) setSHA(result.content.sha);
     pendingSave = false;
     saveTimer = null;
+    lastKnownCount = items.length;
     setSyncStatus('connected', 'Saved to GitHub · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
   } catch(e) {
     pendingSave = false;
@@ -1200,6 +1272,27 @@ function scheduleSave() {
   if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveToGitHub, 1200);
+}
+
+function downloadBackup() {
+  const name = 'the-collection-backup-' + localISO(new Date()) + '.json';
+  const blob = new Blob([JSON.stringify({ _version: DATA_VERSION, items: items }, null, 2)], { type: 'application/json' });
+  try {
+    const file = new File([blob], name, { type: 'application/json' });
+    // The home-screen app can't save a plain download, so it uses the share sheet (same as the PDF).
+    if (isStandaloneApp() && navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+      navigator.share({ files: [file], title: name }).catch(function() {});
+      closePopovers();
+      return;
+    }
+  } catch (e) {}
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
+  showToast('Backup downloaded · ' + items.length + ' items');
+  closePopovers();
 }
 
 function resetLocalData() {
@@ -1252,8 +1345,8 @@ const TAB_DEFS = [
     empty:['Your collection is empty', 'Tap + Add Item to add a piece you own and keep.'] },
   { id:'wishlist',   label:'Wishlist',   statuses:['wishlist'],              newStatus:'wishlist',
     empty:['Your wishlist is empty', "Tap + Add Item to save a piece you'd like to find."] },
-  { id:'forsale',    label:'For sale',   statuses:['draft','active','hold'], newStatus:'draft',
-    empty:['Nothing for sale yet', 'Add a piece and set it to Draft or Active.'] },
+  { id:'forsale',    label:'Listed',     statuses:['draft','active','hold'], newStatus:'draft',
+    empty:['Nothing listed yet', 'Add a piece and set it to Draft or Active.'] },
   { id:'sold',       label:'Sold',       statuses:['sold'],                  newStatus:'sold',
     empty:['No sold pieces yet', 'Pieces you mark as Sold appear here.'] }
 ];
@@ -1282,7 +1375,8 @@ function resetInapplicableFilters() {
   const set = function(id) { const el = document.getElementById(id); if (el) el.value = ''; };
   if (currentTab !== 'forsale')                          { filterStatus  = ''; set('filter-status'); }
   if (currentTab !== 'forsale' && currentTab !== 'sold') { filterChannel = ''; set('filter-channel'); }
-  if (currentTab === 'wishlist')                         { filterPType   = ''; set('filter-ptype'); }
+  if (currentTab === 'wishlist')                         { filterPType   = ''; set('filter-ptype'); filterCondition = ''; set('filter-condition'); }
+  if (currentTab !== 'sold')                             { filterYearSold = ''; set('filter-yearsold'); }
 }
 function setTab(id) { currentTab = id; rememberTab(); resetInapplicableFilters(); render(); }
 function defaultStatusForTab() {
@@ -1309,7 +1403,15 @@ function updateFilterUI() {
   show('fr-status',  currentTab === 'forsale');
   show('fr-channel', currentTab === 'forsale' || currentTab === 'sold');
   show('fr-ptype',   currentTab !== 'wishlist');
+  show('fr-condition', currentTab !== 'wishlist');
+  show('fr-yearsold', currentTab === 'sold');
   let n = 0;
+  if (filterCategory) n++;
+  if (filterSize) n++;
+  if (currentTab !== 'wishlist' && filterCondition) n++;
+  if (filterBrand) n++;
+  if (filterYear) n++;
+  if (currentTab === 'sold' && filterYearSold) n++;
   if (currentTab === 'forsale' && filterStatus) n++;
   if ((currentTab === 'forsale' || currentTab === 'sold') && filterChannel) n++;
   if (currentTab !== 'wishlist' && filterPType) n++;
@@ -1317,9 +1419,9 @@ function updateFilterUI() {
   if (btn) btn.textContent = n ? 'Filters · ' + n : 'Filters';
 }
 function clearFilters() {
-  filterStatus = ''; filterChannel = ''; filterPType = '';
-  ['filter-status', 'filter-channel', 'filter-ptype'].forEach(function(id) { const el = document.getElementById(id); if (el) el.value = ''; });
-  updateFilterUI(); renderGrid();
+  filterStatus = ''; filterChannel = ''; filterPType = ''; filterCategory = ''; filterBrand = ''; filterYear = ''; filterYearSold = ''; filterCondition = ''; filterSize = '';
+  ['filter-status', 'filter-channel', 'filter-ptype', 'filter-condition', 'filter-size', 'filter-category', 'filter-brand', 'filter-year', 'filter-yearsold'].forEach(function(id) { const el = document.getElementById(id); if (el) el.value = ''; });
+  renderGrid();
 }
 function closePopovers() {
   const a = document.getElementById('filters-pop'); if (a) a.classList.remove('open');
@@ -1383,6 +1485,61 @@ function migrateLegacyCategory(item) {
 }
 let searchQuery = '';
 
+// ── CONDITION + ONE-TIME DATA MIGRATION ──
+// "Bought" (purchaseType) = state when you bought it. "Condition" (conditionGrade) = state today. The old free-text
+// condition becomes "Condition notes". Runs once per item (when conditionGrade has never been set); DATA_VERSION is untouched.
+const CONDITIONS = [['new', 'New'], ['likenew', 'Like New'], ['excellent', 'Excellent'], ['good', 'Good'], ['fair', 'Fair']];
+function conditionLabel(k) { const c = CONDITIONS.find(function(x) { return x[0] === k; }); return c ? c[1] : ''; }
+const HARDWARE = ['Brass', 'Gold', 'Silver', 'Palladium', 'Gunmetal', 'Black', 'Copper', 'None', 'Other'];
+const SIZES = ['Mini', 'Small', 'Medium', 'Large', 'Extra Large'];
+// One-time size picks for pieces whose old Size was blank or a measurement (Robert, 2026-10-03).
+const SIZE_OVERRIDES = { mnksi5ads88s: 'Small', muot03n4l0s3: 'Large', mni60ftvsxin: 'Mini' };
+function migrateItems() {
+  let changed = false;
+  items.forEach(function(it) {
+    if (it.modelSize === undefined) {
+      // Size is now a size class; the brand's own size name (GM, Cabine) moves to Model size.
+      const old = String(it.size || '').trim();
+      let size = '', model = '';
+      const hit = SIZES.find(function(x) { return x.toLowerCase() === old.toLowerCase(); });
+      if (hit) size = hit;
+      else if (/^(gm|cabine)$/i.test(old)) { size = 'Large'; model = old; }
+      else if (old) model = old;
+      if (/\d\s*"?\s*[×x]\s*\d/.test(model)) model = '';
+      if (!size && SIZE_OVERRIDES[it.id]) size = SIZE_OVERRIDES[it.id];
+      it.size = size;
+      it.modelSize = model;
+      changed = true;
+    }
+    if (it.hardwareNote === undefined) {
+      // Hardware is now a dropdown; anything that is not a listed finish becomes Other with the old text kept as a note.
+      const h = String(it.hardware || '').trim();
+      const hit = HARDWARE.find(function(x) { return x.toLowerCase() === h.toLowerCase(); });
+      let note = '';
+      if (hit) it.hardware = hit;
+      else if (/^(n\/a|na|none|-|—)$/i.test(h)) it.hardware = h ? 'None' : '';
+      else if (h) { it.hardware = 'Other'; note = h; }
+      it.hardwareNote = note;
+      changed = true;
+    }
+    if (it.conditionGrade !== undefined) return;
+    const c = String(it.condition || '').trim();
+    let grade = '', notes = c;
+    if (/^new$/i.test(c)) { grade = 'new'; notes = ''; }
+    else if (/like new|barely used/i.test(c)) grade = 'likenew';
+    else if (/lightly|light |excellent|occasional/i.test(c)) grade = 'excellent';
+    if (it.status === 'wishlist') grade = '';
+    if (/reloved/i.test(it.name || '') && !/reloved/i.test(notes)) notes = (notes ? notes + ' ' : '') + 'Coach (Re)Loved: previously owned, restored by Coach.';
+    it.conditionGrade = grade;
+    it.condition = notes;
+    if (it.status !== 'wishlist' && !it.purchaseType) it.purchaseType = 'new';
+    changed = true;
+  });
+  return changed;
+}
+let filterBrand = '', filterYear = '', filterYearSold = '', filterCondition = '', filterSize = '';
+const BRAND_STARTERS = ['Coach', 'Hermès', 'Louis Vuitton', 'Loro Piana'];
+
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function fmt(n) {
@@ -1402,11 +1559,84 @@ function fmtCost(n, currency) {
   var sym = symbols[currency];
   return sym ? sym + num + ' ' + currency : num + ' ' + currency;
 }
+function numOrNull(v) { if (v === '' || v == null) return null; const n = Number(v); return isNaN(n) ? null : n; }
+function isForeign(i) { return !!i.costCurrency && i.costCurrency !== 'USD'; }
+// What the piece cost in dollars: the amount paid if it was USD, otherwise the card-statement USD amount (or null if not entered).
+function costUSD(i) {
+  const c = numOrNull(i.cost);
+  if (c == null) return null;
+  return isForeign(i) ? numOrNull(i.costUSD) : c;
+}
+function costLabel(i) {
+  const base = fmtCost(i.cost, i.costCurrency);
+  if (isForeign(i)) { const u = costUSD(i); return u != null ? base + ' (' + fmt(u) + ')' : base; }
+  return base;
+}
+function brandKey(b) { return String(b || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+function yearOf(d) { return d ? String(d).slice(0, 4) : ''; }
+function brandDisplayMap() {
+  const map = {};
+  BRAND_STARTERS.forEach(function(b) { map[brandKey(b)] = b; });
+  items.forEach(function(i) { const k = brandKey(i.brand); if (k && !map[k]) map[k] = String(i.brand).trim(); });
+  return map;
+}
+function canonicalBrand(raw) { const k = brandKey(raw); return (k && brandDisplayMap()[k]) || raw; }
+
+// ── SORTING ──
+const SORT_DEFS = {
+  acquired:  { label: 'Date acquired',    type: 'str', dir: 'desc', get: function(i) { return i.acquired || null; } },
+  soldDate:  { label: 'Date sold',        type: 'str', dir: 'desc', get: function(i) { return i.soldDate || null; } },
+  name:      { label: 'Name',             type: 'str', dir: 'asc',  get: function(i) { return i.name || null; } },
+  brand:     { label: 'Brand',            type: 'str', dir: 'asc',  get: function(i) { return brandKey(i.brand) || null; } },
+  paid:      { label: 'Price paid (USD)', type: 'num', dir: 'desc', get: costUSD },
+  asking:    { label: 'Asking price',     type: 'num', dir: 'desc', get: function(i) { return numOrNull(i.price); } },
+  target:    { label: 'Target price',     type: 'num', dir: 'desc', get: function(i) { return numOrNull(i.price); } },
+  soldPrice: { label: 'Sold price',       type: 'num', dir: 'desc', get: function(i) { return numOrNull(i.soldPrice); } },
+  margin:    { label: 'Margin',           type: 'num', dir: 'desc', get: function(i) { const p = numOrNull(i.price), c = costUSD(i); return (p != null && c != null) ? p - c : null; } },
+  profit:    { label: 'Profit',           type: 'num', dir: 'desc', get: function(i) { const p = numOrNull(i.soldPrice), c = costUSD(i); return (p != null && c != null) ? p - c : null; } }
+};
+const TAB_SORTS = {
+  collection: ['acquired', 'paid', 'name', 'brand'],
+  wishlist:   ['name', 'brand', 'target'],
+  forsale:    ['asking', 'margin', 'paid', 'acquired', 'name', 'brand'],
+  sold:       ['soldDate', 'soldPrice', 'profit', 'acquired', 'name', 'brand']
+};
+const sortState = {
+  collection: { key: 'acquired', dir: 'desc' },
+  wishlist:   { key: 'name',     dir: 'asc'  },
+  forsale:    { key: 'asking',   dir: 'desc' },
+  sold:       { key: 'soldDate', dir: 'desc' }
+};
+// Items missing the sort value always go last, whichever direction is chosen.
+function sortList(list) {
+  if (IS_VIEW_MODE) return list;
+  const st = sortState[currentTab], def = st && SORT_DEFS[st.key];
+  if (!def) return list;
+  const mult = st.dir === 'asc' ? 1 : -1;
+  const rows = list.map(function(it, idx) { return { it: it, idx: idx, v: def.get(it) }; });
+  rows.sort(function(a, b) {
+    if (a.v == null && b.v == null) return a.idx - b.idx;
+    if (a.v == null) return 1;
+    if (b.v == null) return -1;
+    const c = def.type === 'num' ? a.v - b.v : String(a.v).localeCompare(String(b.v), undefined, { sensitivity: 'base', numeric: true });
+    return c ? c * mult : a.idx - b.idx;
+  });
+  return rows.map(function(r) { return r.it; });
+}
+function renderSortUI() {
+  const sel = document.getElementById('sort-select'), btn = document.getElementById('sort-dir');
+  if (!sel || !btn) return;
+  const st = sortState[currentTab];
+  sel.innerHTML = TAB_SORTS[currentTab].map(function(k) { return '<option value="' + k + '">' + SORT_DEFS[k].label + '</option>'; }).join('');
+  sel.value = st.key;
+  btn.textContent = st.dir === 'asc' ? '↑' : '↓';
+}
+
 function showToast(msg, isErr) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast' + (isErr ? ' err' : '') + ' show';
-  setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, 3000);
+  setTimeout(() => { t.className = 'toast' + (isErr ? ' err' : ''); }, isErr ? 7000 : 3000);
 }
 
 // ── RENDER ─────────────────────────────────────────────────────────────────
@@ -1416,57 +1646,146 @@ const IS_VIEW_MODE = new URLSearchParams(window.location.search).has('view');
 function render() {
   autoPickTab();
   refreshCategoryFilter();
+  refreshFilterOptions();
   renderTabs();
-  renderStats();
+  renderSortUI();
   renderGrid();
-  updateFilterUI();
 }
 
-function renderStats() {
+function renderStats(list) {
   const row = document.getElementById('stats-row');
-  const inTab = items.filter(function(i) { return tabOf(i.status) === currentTab; });
-  const sum = function(list, key) { return list.reduce(function(t, i) { return t + (Number(i[key]) || 0); }, 0); };
-  const isUSD = function(i) { return !i.costCurrency || i.costCurrency === 'USD'; };
+  const sum = function(arr, fn) { return arr.reduce(function(t, i) { return t + (fn(i) || 0); }, 0); };
+  const noPrice = list.filter(function(i) { return numOrNull(i.price) == null; }).length;
   let pills = [];
   if (currentTab === 'forsale') {
-    const active = inTab.filter(function(i) { return i.status === 'active'; });
-    pills = [['Items', inTab.length], ['Active', active.length], ['Listed value', fmt(sum(active, 'price'))]];
+    const active = list.filter(function(i) { return i.status === 'active'; });
+    pills = [['Items', list.length], ['Active', active.length],
+             ['Value', fmt(sum(list, function(i) { return numOrNull(i.price); })), noPrice ? noPrice + ' without an asking price' : '']];
   } else if (currentTab === 'collection') {
-    pills = [['Pieces', inTab.length],
-             ['Bought new', inTab.filter(function(i) { return i.purchaseType === 'new'; }).length],
-             ['Pre-owned',  inTab.filter(function(i) { return i.purchaseType === 'preowned'; }).length]];
+    const needUSD = list.filter(function(i) { return numOrNull(i.cost) != null && costUSD(i) == null; }).length;
+    const nNew = list.filter(function(i) { return i.purchaseType === 'new'; }).length;
+    const nPre = list.filter(function(i) { return i.purchaseType === 'preowned'; }).length;
+    const nUnset = list.length - nNew - nPre;
+    pills = [['Pieces', list.length, nNew + ' bought new · ' + nPre + ' pre-owned' + (nUnset ? ' · ' + nUnset + ' not set' : '')],
+             ['Total', fmt(sum(list, costUSD)), needUSD ? needUSD + ' need a USD cost' : '']];
   } else if (currentTab === 'wishlist') {
-    pills = [['Pieces', inTab.length], ['Total target', fmt(sum(inTab, 'price'))]];
+    pills = [['Pieces', list.length],
+             ['Budget', fmt(sum(list, function(i) { return numOrNull(i.price); })), noPrice ? noPrice + ' without a target price' : '']];
   } else {
-    // Profit only counts pieces bought in dollars, so mixed currencies never get subtracted.
-    const withUSD = inTab.filter(function(i) { return isUSD(i) && i.soldPrice && i.cost; });
-    const profit = withUSD.reduce(function(t, i) { return t + (Number(i.soldPrice) - Number(i.cost)); }, 0);
-    const skipped = inTab.length - withUSD.length;
-    pills = [['Items', inTab.length], ['Sold revenue', fmt(sum(inTab, 'soldPrice'))],
-             [skipped > 0 ? 'Net profit (USD only)' : 'Net profit', withUSD.length ? fmt(profit) : '—',
-              skipped > 0 ? 'Pieces bought in another currency are left out of profit.' : '']];
+    const both = list.filter(function(i) { return numOrNull(i.soldPrice) != null && costUSD(i) != null; });
+    const profit = both.reduce(function(t, i) { return t + (numOrNull(i.soldPrice) - costUSD(i)); }, 0);
+    const skipped = list.length - both.length;
+    pills = [['Items', list.length],
+             ['Sold revenue', fmt(sum(list, function(i) { return numOrNull(i.soldPrice); }))],
+             ['Profit', both.length ? fmt(profit) : '—', skipped ? skipped + ' not counted (needs a sold price and USD cost)' : '']];
   }
   row.innerHTML = pills.map(function(p) {
-    return '<div class="stat-pill"' + (p[2] ? ' title="' + p[2] + '"' : '') + '><div class="stat-label">' + p[0] +
-           '</div><div class="stat-value">' + p[1] + '</div></div>';
+    return '<div class="stat-pill"><div class="stat-label">' + p[0] + '</div><div class="stat-value">' + p[1] + '</div>' +
+           (p[2] ? '<div class="stat-note">' + esc(p[2]) + '</div>' : '') + '</div>';
   }).join('');
 }
 
-function renderGrid() {
-  const grid = document.getElementById('items-grid');
-  const q = searchQuery.toLowerCase();
-  let list = items.filter(item => {
+function getVisible() {
+  const q = searchQuery.toLowerCase().trim();
+  const list = items.filter(function(item) {
     if (!IS_VIEW_MODE && tabOf(item.status) !== currentTab) return false;
     if (filterStatus && item.status !== filterStatus) return false;
     if (filterChannel && !(item.channels || []).includes(filterChannel)) return false;
     if (filterPType && item.purchaseType !== filterPType) return false;
     if (filterCategory && item.category !== filterCategory) return false;
+    if (filterCondition && item.conditionGrade !== filterCondition) return false;
+    if (filterSize && item.size !== filterSize) return false;
+    if (filterBrand && brandKey(item.brand) !== filterBrand) return false;
+    if (filterYear && yearOf(item.acquired) !== filterYear) return false;
+    if (filterYearSold && yearOf(item.soldDate) !== filterYearSold) return false;
     if (q) {
-      const hay = [item.name, item.brand, item.category, item.notes, item.sku].join(' ').toLowerCase();
+      const hay = [item.name, item.brand, item.category, item.notes, item.sku, item.color, item.material, item.modelSize].join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
   });
+  return sortList(list);
+}
+
+function refreshFilterOptions() {
+  const fill = function(id, firstLabel, pairs, current) {
+    const sel = document.getElementById(id);
+    if (!sel) return '';
+    sel.innerHTML = '<option value="">' + firstLabel + '</option>' + pairs.map(function(p) {
+      return '<option value="' + esc(p[0]) + '">' + esc(p[1]) + '</option>';
+    }).join('');
+    const ok = pairs.some(function(p) { return p[0] === current; });
+    sel.value = ok ? current : '';
+    return ok ? current : '';
+  };
+  const map = brandDisplayMap();
+  const present = [...new Set(items.map(function(i) { return brandKey(i.brand); }).filter(Boolean))];
+  const brandPairs = present.map(function(k) { return [k, map[k]]; }).sort(function(a, b) { return a[1].localeCompare(b[1]); });
+  filterBrand = fill('filter-brand', 'All brands', brandPairs, filterBrand);
+  const years = function(field) {
+    return [...new Set(items.map(function(i) { return yearOf(i[field]); }).filter(Boolean))].sort().reverse().map(function(y) { return [y, y]; });
+  };
+  filterYear     = fill('filter-year',     'All years', years('acquired'), filterYear);
+  filterYearSold = fill('filter-yearsold', 'All years', years('soldDate'), filterYearSold);
+  const ml = document.getElementById('model-size-list');
+  if (ml) {
+    const seen = {};
+    items.forEach(function(i) { const m = String(i.modelSize || '').trim(); if (m) seen[m] = true; });
+    ml.innerHTML = Object.keys(seen).sort().map(function(m) { return '<option value="' + esc(m) + '">'; }).join('');
+  }
+  const dl = document.getElementById('brand-list');
+  if (dl) {
+    const all = {}; BRAND_STARTERS.forEach(function(b) { all[brandKey(b)] = b; });
+    present.forEach(function(k) { if (!all[k]) all[k] = map[k]; });
+    dl.innerHTML = Object.keys(all).map(function(k) { return '<option value="' + esc(all[k]) + '">'; }).join('');
+  }
+}
+
+function renderChips(shown, total) {
+  const box = document.getElementById('chips'), note = document.getElementById('results-note');
+  if (!box || !note) return;
+  const chips = [];
+  const add = function(key, label) { chips.push('<button class="chip" type="button" onclick="removeFilter(\'' + key + '\')">' + esc(label) + ' ×</button>'); };
+  const map = brandDisplayMap();
+  const stLabel = { draft: 'Draft', active: 'Active', hold: 'Hold / Pending' };
+  const ptLabel = { new: 'Bought new', preowned: 'Bought pre-owned' };
+  if (searchQuery.trim()) add('search', 'Search: ' + searchQuery.trim());
+  if (currentTab === 'forsale' && filterStatus) add('status', stLabel[filterStatus] || filterStatus);
+  if ((currentTab === 'forsale' || currentTab === 'sold') && filterChannel) add('channel', filterChannel);
+  if (currentTab !== 'wishlist' && filterPType) add('ptype', ptLabel[filterPType] || filterPType);
+  if (currentTab !== 'wishlist' && filterCondition) add('condition', 'Condition: ' + conditionLabel(filterCondition));
+  if (filterSize) add('size', 'Size: ' + filterSize);
+  if (filterCategory) add('category', filterCategory);
+  if (filterBrand) add('brand', map[filterBrand] || filterBrand);
+  if (filterYear) add('year', 'Acquired ' + filterYear);
+  if (currentTab === 'sold' && filterYearSold) add('yearsold', 'Sold ' + filterYearSold);
+  box.innerHTML = chips.join('');
+  box.style.display = chips.length ? '' : 'none';
+  note.textContent = 'Showing ' + shown + ' of ' + total;
+  note.style.display = chips.length ? '' : 'none';
+}
+function removeFilter(key) {
+  const set = function(id) { const el = document.getElementById(id); if (el) el.value = ''; };
+  if (key === 'search')   { searchQuery = '';     set('search-input'); }
+  if (key === 'status')   { filterStatus = '';    set('filter-status'); }
+  if (key === 'channel')  { filterChannel = '';   set('filter-channel'); }
+  if (key === 'ptype')    { filterPType = '';     set('filter-ptype'); }
+  if (key === 'condition') { filterCondition = ''; set('filter-condition'); }
+  if (key === 'size')     { filterSize = '';      set('filter-size'); }
+  if (key === 'category') { filterCategory = '';  set('filter-category'); }
+  if (key === 'brand')    { filterBrand = '';     set('filter-brand'); }
+  if (key === 'year')     { filterYear = '';      set('filter-year'); }
+  if (key === 'yearsold') { filterYearSold = '';  set('filter-yearsold'); }
+  renderGrid();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('items-grid');
+  const list = getVisible();
+  const totalInTab = IS_VIEW_MODE ? items.length : items.filter(function(i) { return tabOf(i.status) === currentTab; }).length;
+  renderStats(list);
+  renderChips(list.length, totalInTab);
+  updateFilterUI();
 
   if (!list.length) {
     grid.innerHTML =
@@ -1483,13 +1802,14 @@ function renderGrid() {
 
   const statusCls   = { active:'status-active', sold:'status-sold', draft:'status-draft', hold:'status-hold', stash:'status-stash', wishlist:'status-wishlist' };
   const statusLabel = { active:'Active', sold:'Sold', draft:'Draft', hold:'Hold', stash:'Stash', wishlist:'Wishlist' };
-  const typeLabel   = { new:'New', preowned:'Pre-Owned' };
+  const typeLabel   = { new:'Bought new', preowned:'Bought pre-owned' };
 
   grid.innerHTML = list.map(function(item) {
     const price  = Number(item.price)  || 0;
     const cost   = Number(item.cost)   || 0;
-    const margin = (price && cost && (!item.costCurrency || item.costCurrency === 'USD')) ? price - cost : null;
-    const marginPct = (margin != null && cost) ? Math.round(margin / cost * 100) : null;
+    const costU  = costUSD(item);
+    const margin = (price && costU != null) ? price - costU : null;
+    const marginPct = (margin != null && costU) ? Math.round(margin / costU * 100) : null;
 
     const isWish  = item.status === 'wishlist';
     const isStash = item.status === 'stash';
@@ -1504,14 +1824,14 @@ function renderGrid() {
           ? '<span class="price-current">' + fmt(price) + '</span><span class="price-cost">target price</span>'
           : '<span class="price-cost">No target price</span>')
       : isStash
-      ? (cost ? '<span class="price-current">' + fmtCost(cost, item.costCurrency) + '</span><span class="price-cost">paid</span>'
+      ? (cost ? '<span class="price-current">' + costLabel(item) + '</span><span class="price-cost">paid</span>'
               : '<span class="price-cost">No cost entered</span>')
       : (item.status === 'sold' && item.soldPrice)
-      ? '<span class="price-current">' + fmt(item.soldPrice) + '</span>' + (cost ? '<span class="price-cost">sold · cost ' + fmtCost(cost, item.costCurrency) + '</span>' : '<span class="price-cost">sold</span>')
+      ? '<span class="price-current">' + fmt(item.soldPrice) + '</span>' + (cost ? '<span class="price-cost">sold · cost ' + costLabel(item) + '</span>' : '<span class="price-cost">sold</span>')
       : (price ? '<span class="price-current">' + fmt(price) + '</span>' : '<span class="price-cost">No asking price yet</span>') +
-        (cost ? '<span class="price-cost">cost ' + fmtCost(cost, item.costCurrency) + '</span>' : '');
+        (cost && !IS_VIEW_MODE ? '<span class="price-cost">cost ' + costLabel(item) + '</span>' : '');
 
-    const marginBadge = (isSale && margin != null)
+    const marginBadge = (isSale && margin != null && !IS_VIEW_MODE)
       ? '<span class="price-margin ' + (margin >= 0 ? 'margin-pos' : 'margin-neg') + '">' +
         (margin >= 0 ? '+' : '') + fmt(margin) + (marginPct != null ? ' · ' + marginPct + '%' : '') + '</span>'
       : '';
@@ -1526,7 +1846,7 @@ function renderGrid() {
              '<span class="ph-price">' + fmt(ph.price) + '</span>' + delta + '</div>';
     }).join('');
 
-    const phSection = (isSale && phEntries)
+    const phSection = (isSale && phEntries && !IS_VIEW_MODE)
       ? '<div class="price-history-mini"><div class="ph-label">Price History</div>' +
         '<div class="ph-entries">' + phEntries + '</div></div>'
       : '';
@@ -1568,6 +1888,8 @@ function renderGrid() {
       '<div class="meta-row">' +
       (item.category ? '<span class="meta-item">' + item.category + '</span>' : '') +
       (!isWish && item.acquired ? '<span class="meta-item">Acq. ' + fmtDate(item.acquired) + '</span>' : '') +
+      (item.status === 'sold' && item.soldDate ? '<span class="meta-item">Sold ' + fmtDate(item.soldDate) + '</span>' : '') +
+      (!isWish && item.conditionGrade ? '<span class="meta-item">' + esc(conditionLabel(item.conditionGrade)) + ' condition</span>' : '') +
       (!isWish ? '<span class="meta-item ' + (item.receipt ? 'receipt-yes' : 'receipt-no') + '">' +
       (item.receipt ? '✓ Receipt' : 'No receipt') + '</span>' : '') +
       '</div>' +
@@ -1592,11 +1914,22 @@ function openModal(id) {
   document.getElementById('f-notes').value       = item ? (item.notes || '')       : '';
   document.getElementById('f-features').value    = item ? (item.features || '')    : '';
   document.getElementById('f-condition').value   = item ? (item.condition || '')   : '';
+  document.getElementById('f-condition-grade').value = item ? (item.conditionGrade || '') : '';
   document.getElementById('f-accompanied').value = item ? (item.accompanied || '') : '';
   document.getElementById('f-sku').value         = item ? (item.sku || '')         : '';
-  document.getElementById('f-size').value        = item ? (item.size || '')        : '';
+  (function() {
+    const sel = document.getElementById('f-size'), cur = item ? (item.size || '') : '';
+    if (cur && ![...sel.options].some(function(o) { return o.value === cur; })) sel.add(new Option(cur, cur));
+    sel.value = cur;
+  })();
+  document.getElementById('f-model-size').value  = item ? (item.modelSize || '')   : '';
   document.getElementById('f-material').value    = item ? (item.material || '')    : '';
-  document.getElementById('f-hardware').value    = item ? (item.hardware || '')    : '';
+  (function() {
+    const sel = document.getElementById('f-hardware'), cur = item ? (item.hardware || '') : '';
+    if (cur && ![...sel.options].some(function(o) { return o.value === cur; })) sel.add(new Option(cur, cur));
+    sel.value = cur;
+  })();
+  document.getElementById('f-hardware-note').value = item ? (item.hardwareNote || '') : '';
   document.getElementById('f-color').value       = item ? (item.color || '')       : '';
   document.getElementById('f-origin').value      = item ? (item.origin || '')      : '';
   document.getElementById('f-purchased').value   = item ? (item.purchased || '')   : '';
@@ -1608,6 +1941,8 @@ function openModal(id) {
   document.getElementById('f-ptype').value       = item ? (item.purchaseType || '') : '';
   document.getElementById('f-acquired').value    = item ? (item.acquired || '')  : '';
   document.getElementById('f-cost-currency').value = item ? (item.costCurrency || 'USD') : 'USD';
+  document.getElementById('f-cost-usd').value    = item ? (item.costUSD || '')   : '';
+  document.getElementById('f-sold-date').value   = item ? (item.soldDate || '')  : '';
   document.getElementById('f-receipt').checked   = item ? !!item.receipt : false;
 
   document.querySelectorAll('[name="channel"]').forEach(cb => {
@@ -1638,22 +1973,27 @@ function saveItem() {
   const channels = [...document.querySelectorAll('[name="channel"]:checked')].map(cb => cb.value);
   const data = {
     name,
-    brand:        document.getElementById('f-brand').value.trim(),
+    brand:        canonicalBrand(document.getElementById('f-brand').value.trim()),
     category:     document.getElementById('f-category').value.trim(),
     notes:        document.getElementById('f-notes').value.trim(),
     features:     document.getElementById('f-features').value.trim(),
     condition:    document.getElementById('f-condition').value.trim(),
+    conditionGrade: document.getElementById('f-condition-grade').value,
     accompanied:  document.getElementById('f-accompanied').value.trim(),
     sku:          document.getElementById('f-sku').value.trim(),
     size:         document.getElementById('f-size').value.trim(),
+    modelSize:    document.getElementById('f-model-size').value.trim(),
     material:     document.getElementById('f-material').value.trim(),
     hardware:     document.getElementById('f-hardware').value.trim(),
+    hardwareNote: document.getElementById('f-hardware-note').value.trim(),
     color:        document.getElementById('f-color').value.trim(),
     origin:       document.getElementById('f-origin').value.trim(),
     purchased:    document.getElementById('f-purchased').value.trim(),
     dimensions:   document.getElementById('f-dimensions').value.trim(),
     cost:         document.getElementById('f-cost').value || '',
     costCurrency: document.getElementById('f-cost-currency').value || 'USD',
+    costUSD:      document.getElementById('f-cost-currency').value !== 'USD' ? (document.getElementById('f-cost-usd').value || '') : '',
+    soldDate:     document.getElementById('f-sold-date').value || '',
     price:        document.getElementById('f-price').value || '',
     soldPrice:    document.getElementById('f-sold-price').value || '',
     status, channels,
@@ -1739,6 +2079,8 @@ function applyStatusVisibility() {
   document.getElementById('f-price-wrap').style.display = stash ? 'none' : '';
   document.getElementById('f-price-label').textContent  = wish ? 'Target Price' : 'Current Asking Price';
   document.getElementById('f-sold-price-wrap').style.display = st === 'sold' ? '' : 'none';
+  document.getElementById('f-sold-date-wrap').style.display  = st === 'sold' ? '' : 'none';
+  document.getElementById('f-cost-usd-wrap').style.display   = (!wish && document.getElementById('f-cost-currency').value !== 'USD') ? '' : 'none';
 }
 function onStatusChange() { applyStatusVisibility(); }
 
@@ -1753,6 +2095,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function(data) {
         items = (data.items || []).filter(function(i) { return i.status === 'active'; });
+        migrateItems();
         render();
       })
       .catch(function() {
@@ -1766,7 +2109,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   loadLocal();
+  if (migrateItems()) saveLocal();
   localTrusted = items.length > 0;
+  lastKnownCount = items.length;
   render();
   updateSetupBanner();
 
@@ -1794,8 +2139,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('filter-ptype').addEventListener('change', e => {
     filterPType = e.target.value; updateFilterUI(); renderGrid();
   });
-  document.getElementById('filter-category').addEventListener('change', e => {
-    filterCategory = e.target.value; renderGrid();
+  document.getElementById('filter-category').addEventListener('change', e => { filterCategory = e.target.value; renderGrid(); });
+  document.getElementById('filter-condition').addEventListener('change', e => { filterCondition = e.target.value; renderGrid(); });
+  document.getElementById('filter-size').addEventListener('change', e => { filterSize = e.target.value; renderGrid(); });
+  document.getElementById('filter-brand').addEventListener('change', e => { filterBrand = e.target.value; renderGrid(); });
+  document.getElementById('filter-year').addEventListener('change', e => { filterYear = e.target.value; renderGrid(); });
+  document.getElementById('filter-yearsold').addEventListener('change', e => { filterYearSold = e.target.value; renderGrid(); });
+  document.getElementById('f-cost-currency').addEventListener('change', applyStatusVisibility);
+  document.getElementById('sort-select').addEventListener('change', e => {
+    const k = e.target.value;
+    sortState[currentTab] = { key: k, dir: SORT_DEFS[k].dir };
+    renderSortUI(); renderGrid();
+  });
+  document.getElementById('sort-dir').addEventListener('click', () => {
+    const st = sortState[currentTab];
+    st.dir = st.dir === 'asc' ? 'desc' : 'asc';
+    renderSortUI(); renderGrid();
   });
 
   if (configOk()) syncFromGitHub();
@@ -1986,16 +2345,17 @@ function printItem(id) {
         '</ul>';
     }
   }
+  var condText = [conditionLabel(item.conditionGrade), (item.condition || '').trim()].filter(Boolean).join(' \u2014 ');
   var condHtml = '';
-  if (item.condition || item.accompanied) {
+  if (condText || item.accompanied) {
     condHtml = '<div class="ps-condition">';
-    if (item.condition)   condHtml += '<p><strong>Condition:</strong> ' + esc(item.condition) + '</p>';
+    if (condText)         condHtml += '<p><strong>Condition:</strong> ' + esc(condText) + '</p>';
     if (item.accompanied) condHtml += '<p><strong>Accompanied by:</strong> ' + item.accompanied + '</p>';
     condHtml += '</div>';
   }
   var specDefs = [
-    ['Product Code', item.sku], ['Size', item.size],
-    ['Leather / Material', item.material], ['Hardware', item.hardware],
+    ['Product Code', item.sku], ['Size', [item.size, item.modelSize ? '(' + item.modelSize + ')' : ''].filter(Boolean).join(' ')],
+    ['Leather / Material', item.material], ['Hardware', item.hardware && item.hardware !== 'Other' ? item.hardware + (item.hardwareNote ? ' (' + item.hardwareNote + ')' : '') : (item.hardwareNote || item.hardware)],
     ['Color', item.color], ['Origin', item.origin]
   ];
   var specsHtml = '<div class="ps-specs">';
