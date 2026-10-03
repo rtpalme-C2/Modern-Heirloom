@@ -826,7 +826,7 @@ body.view-mode .sort-wrap,body.view-mode .chips,body.view-mode .results-note{dis
               <option value="active">Active</option>
               <option value="hold">Hold / Pending</option>
               <option value="sold">Sold</option>
-              <option value="stash">Stash</option>
+              <option value="stash">Collection</option>
               <option value="wishlist">Wishlist</option>
             </select>
           </div>
@@ -1881,7 +1881,7 @@ function renderGrid() {
   }
 
   const statusCls   = { active:'status-active', sold:'status-sold', draft:'status-draft', hold:'status-hold', stash:'status-stash', wishlist:'status-wishlist' };
-  const statusLabel = { active:'Active', sold:'Sold', draft:'Draft', hold:'Hold', stash:'Stash', wishlist:'Wishlist' };
+  const statusLabel = { active:'Active', sold:'Sold', draft:'Draft', hold:'Hold', stash:'Collection', wishlist:'Wishlist' };
   const typeLabel   = { new:'Bought new', preowned:'Bought pre-owned' };
 
   grid.innerHTML = list.map(function(item) {
@@ -1966,10 +1966,10 @@ function renderGrid() {
       marginBadge +
       '</div>' +
       '<div class="meta-row">' +
-      (item.category ? '<span class="meta-item">' + item.category + '</span>' : '') +
       (!isWish && item.acquired ? '<span class="meta-item">Acq. ' + fmtDate(item.acquired) + '</span>' : '') +
       (item.status === 'sold' && item.soldDate ? '<span class="meta-item">Sold ' + fmtDate(item.soldDate) + '</span>' : '') +
-      (!isWish && item.conditionGrade ? '<span class="meta-item">' + esc(conditionLabel(item.conditionGrade)) + ' condition</span>' : '') +
+      (item.material ? '<span class="meta-item">' + esc(item.material) + '</span>' : '') +
+      (item.color ? '<span class="meta-item">' + esc(item.color) + '</span>' : '') +
       (!isWish ? '<span class="meta-item ' + (item.receipt ? 'receipt-yes' : 'receipt-no') + '">' +
       (item.receipt ? '✓ Receipt' : 'No receipt') + '</span>' : '') +
       '</div>' +
