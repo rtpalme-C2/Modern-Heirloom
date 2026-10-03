@@ -357,6 +357,10 @@ header{
   border-color:rgba(122,154,106,.4);background:rgba(122,154,106,.08);color:var(--text-main);
 }
 .receipt-toggle input{display:none}
+.acc-grid{display:flex;flex-wrap:wrap;gap:8px}
+.acc-opt{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--border,#d9d2cc);border-radius:999px;font-size:13px;cursor:pointer;background:#fff;text-transform:none;letter-spacing:0;font-weight:400;margin:0}
+.acc-opt input{margin:0;accent-color:#2a0f1c}
+.acc-opt:has(input:checked){background:#2a0f1c;color:#fff;border-color:#2a0f1c}
 .toggle-track{
   width:32px;height:18px;border-radius:12px;
   background:rgba(26,24,20,.15);position:relative;transition:background .2s;flex-shrink:0;
@@ -868,8 +872,21 @@ body.view-mode .sort-wrap,body.view-mode .chips,body.view-mode .results-note{dis
             <input type="text" id="f-condition" placeholder="e.g. Professionally cleaned and conditioned. Light wear on corners.">
           </div>
           <div class="form-field" style="grid-column:1/-1">
-            <label>Accompanied By</label>
-            <input type="text" id="f-accompanied" placeholder="e.g. Dustbag, box, hangtag, strap, authenticity papers.">
+            <label>Accessories</label>
+            <div class="acc-grid" id="f-accessories">
+              <label class="acc-opt"><input type="checkbox" value="Dustbag"><span>Dustbag</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Original Box"><span>Original Box</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Hangtag"><span>Hangtag</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Lock & keys"><span>Lock &amp; keys</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Clochette"><span>Clochette</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Charms"><span>Charms</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Strap"><span>Strap</span></label>
+              <label class="acc-opt"><input type="checkbox" value="Authenticity / CITES papers"><span>Authenticity / CITES papers</span></label>
+            </div>
+          </div>
+          <div class="form-field" style="grid-column:1/-1">
+            <label>Accessory Notes</label>
+            <input type="text" id="f-accessory-note" placeholder="Anything else included, or its condition. Receipt has its own switch below.">
           </div>
           <div class="form-field" style="grid-column:1/-1">
             <label>Product Code</label>
@@ -900,11 +917,15 @@ body.view-mode .sort-wrap,body.view-mode .chips,body.view-mode .results-note{dis
             <input type="text" id="f-color" placeholder="Brand color name, with code if any">
           </div>
           <div class="form-field">
-            <label>Origin</label>
-            <input type="text" id="f-origin" placeholder="e.g. Retail, Outlet, or country made">
+            <label>Source</label>
+            <select id="f-source"><option value="">—</option><option value="Retail">Retail</option><option value="Outlet">Outlet</option><option value="Resale">Resale</option><option value="Gift">Gift</option></select>
+          </div>
+          <div class="form-field">
+            <label>Country of Manufacture</label>
+            <input type="text" id="f-made-in" list="made-in-list" autocomplete="off" placeholder="Optional, e.g. France, Vietnam"><datalist id="made-in-list"></datalist>
           </div>
           <div class="form-field sf-purchase" style="grid-column:1/-1">
-            <label>Purchased</label>
+            <label>Bought At</label>
             <input type="text" id="f-purchased" placeholder="Store or website, and city">
           </div>
           <div class="form-field" style="grid-column:1/-1">
@@ -1490,6 +1511,10 @@ let searchQuery = '';
 // condition becomes "Condition notes". Runs once per item (when conditionGrade has never been set); DATA_VERSION is untouched.
 const CONDITIONS = [['new', 'New'], ['likenew', 'Like New'], ['excellent', 'Excellent'], ['good', 'Good'], ['fair', 'Fair']];
 function conditionLabel(k) { const c = CONDITIONS.find(function(x) { return x[0] === k; }); return c ? c[1] : ''; }
+const ACCESSORIES = ['Dustbag', 'Original Box', 'Hangtag', 'Lock & keys', 'Clochette', 'Charms', 'Strap', 'Authenticity / CITES papers'];
+const ACC_RULES = [[/dust\s?bag/i, 'Dustbag'], [/\bbox\b/i, 'Original Box'], [/hang\s?tag|hagtag/i, 'Hangtag'], [/\block\b|\bkeys?\b/i, 'Lock & keys'],
+  [/clochette/i, 'Clochette'], [/charm/i, 'Charms'], [/\bstrap\b/i, 'Strap'], [/authenticity|cites/i, 'Authenticity / CITES papers']];
+const SOURCES = ['Retail', 'Outlet', 'Resale', 'Gift'];
 const HARDWARE = ['Brass', 'Gold', 'Silver', 'Palladium', 'Gunmetal', 'Black', 'Copper', 'None', 'Other'];
 const SIZES = ['Mini', 'Small', 'Medium', 'Large', 'Extra Large'];
 // One-time size picks for pieces whose old Size was blank or a measurement (Robert, 2026-10-03).
@@ -1520,6 +1545,40 @@ function migrateItems() {
       else if (/^(n\/a|na|none|-|—)$/i.test(h)) it.hardware = h ? 'None' : '';
       else if (h) { it.hardware = 'Other'; note = h; }
       it.hardwareNote = note;
+      changed = true;
+    }
+    if (it.source === undefined) {
+      // Origin mixed a channel (Retail/Outlet) with a country. Channel -> Source; a country is not a channel, so
+      // boutique purchases become Retail and Country of manufacture is left blank for Robert to fill in.
+      const o = String(it.origin || '').trim();
+      let src = '';
+      if (/outlet/i.test(o)) src = 'Outlet';
+      else if (/retail|buy now/i.test(o)) src = 'Retail';
+      else if (/resale|pre-?owned|secondhand/i.test(o)) src = 'Resale';
+      else if (/gift/i.test(o)) src = 'Gift';
+      else if (o) src = 'Retail';
+      it.source = src;
+      it.madeIn = '';
+      changed = true;
+    }
+    if (it.accessories === undefined) {
+      // Free-text Accompanied By becomes a checklist plus a note. Receipt keeps its own switch, so receipt mentions are dropped.
+      const txt = String(it.accompanied || '').trim();
+      const keys = [], keep = [];
+      txt.split(/[.;,]/).map(function(x) { return x.trim().replace(/^and\s+/i, ''); }).filter(Boolean).forEach(function(seg) {
+        let hit = false;
+        ACC_RULES.forEach(function(r) { if (r[0].test(seg)) { hit = true; if (keys.indexOf(r[1]) < 0) keys.push(r[1]); } });
+        const papers = /authenticity|cites/i.test(seg);
+        if (papers) keep.push(seg);
+        else if (!hit && !/receipt/i.test(seg)) keep.push(seg);
+      });
+      it.accessories = ACCESSORIES.filter(function(a) { return keys.indexOf(a) >= 0; });
+      it.accessoryNote = keep.map(function(x) { return x.charAt(0).toUpperCase() + x.slice(1); }).join('. ') + (keep.length ? '.' : '');
+      changed = true;
+    }
+    if (Array.isArray(it.accessories) && it.accessories.indexOf('Box') >= 0) {
+      // "Box" was renamed "Original Box" (Robert, 2026-10-03).
+      it.accessories = it.accessories.map(function(a) { return a === 'Box' ? 'Original Box' : a; });
       changed = true;
     }
     if (it.conditionGrade !== undefined) return;
@@ -1733,6 +1792,13 @@ function refreshFilterOptions() {
     items.forEach(function(i) { const m = String(i.modelSize || '').trim(); if (m) seen[m] = true; });
     ml.innerHTML = Object.keys(seen).sort().map(function(m) { return '<option value="' + esc(m) + '">'; }).join('');
   }
+  const mi = document.getElementById('made-in-list');
+  if (mi) {
+    const seenC = {};
+    ['France', 'Italy', 'Spain', 'Vietnam', 'China', 'Mexico', 'USA'].forEach(function(c) { seenC[c] = true; });
+    items.forEach(function(i) { const m = String(i.madeIn || '').trim(); if (m) seenC[m] = true; });
+    mi.innerHTML = Object.keys(seenC).sort().map(function(m) { return '<option value="' + esc(m) + '">'; }).join('');
+  }
   const dl = document.getElementById('brand-list');
   if (dl) {
     const all = {}; BRAND_STARTERS.forEach(function(b) { all[brandKey(b)] = b; });
@@ -1915,7 +1981,11 @@ function openModal(id) {
   document.getElementById('f-features').value    = item ? (item.features || '')    : '';
   document.getElementById('f-condition').value   = item ? (item.condition || '')   : '';
   document.getElementById('f-condition-grade').value = item ? (item.conditionGrade || '') : '';
-  document.getElementById('f-accompanied').value = item ? (item.accompanied || '') : '';
+  (function() {
+    const have = item && Array.isArray(item.accessories) ? item.accessories : [];
+    document.querySelectorAll('#f-accessories input').forEach(function(cb) { cb.checked = have.indexOf(cb.value) >= 0; });
+    document.getElementById('f-accessory-note').value = item ? (item.accessoryNote || '') : '';
+  })();
   document.getElementById('f-sku').value         = item ? (item.sku || '')         : '';
   (function() {
     const sel = document.getElementById('f-size'), cur = item ? (item.size || '') : '';
@@ -1931,7 +2001,12 @@ function openModal(id) {
   })();
   document.getElementById('f-hardware-note').value = item ? (item.hardwareNote || '') : '';
   document.getElementById('f-color').value       = item ? (item.color || '')       : '';
-  document.getElementById('f-origin').value      = item ? (item.origin || '')      : '';
+  (function() {
+    const sel = document.getElementById('f-source'), cur = item ? (item.source || '') : '';
+    if (cur && ![...sel.options].some(function(o) { return o.value === cur; })) sel.add(new Option(cur, cur));
+    sel.value = cur;
+  })();
+  document.getElementById('f-made-in').value     = item ? (item.madeIn || '')      : '';
   document.getElementById('f-purchased').value   = item ? (item.purchased || '')   : '';
   document.getElementById('f-dimensions').value  = item ? (item.dimensions || '')  : '';
   document.getElementById('f-cost').value        = item ? (item.cost || '')      : '';
@@ -1979,7 +2054,8 @@ function saveItem() {
     features:     document.getElementById('f-features').value.trim(),
     condition:    document.getElementById('f-condition').value.trim(),
     conditionGrade: document.getElementById('f-condition-grade').value,
-    accompanied:  document.getElementById('f-accompanied').value.trim(),
+    accessories:  [...document.querySelectorAll('#f-accessories input:checked')].map(function(cb) { return cb.value; }),
+    accessoryNote: document.getElementById('f-accessory-note').value.trim(),
     sku:          document.getElementById('f-sku').value.trim(),
     size:         document.getElementById('f-size').value.trim(),
     modelSize:    document.getElementById('f-model-size').value.trim(),
@@ -1987,7 +2063,8 @@ function saveItem() {
     hardware:     document.getElementById('f-hardware').value.trim(),
     hardwareNote: document.getElementById('f-hardware-note').value.trim(),
     color:        document.getElementById('f-color').value.trim(),
-    origin:       document.getElementById('f-origin').value.trim(),
+    source:       document.getElementById('f-source').value,
+    madeIn:       document.getElementById('f-made-in').value.trim(),
     purchased:    document.getElementById('f-purchased').value.trim(),
     dimensions:   document.getElementById('f-dimensions').value.trim(),
     cost:         document.getElementById('f-cost').value || '',
@@ -2347,16 +2424,19 @@ function printItem(id) {
   }
   var condText = [conditionLabel(item.conditionGrade), (item.condition || '').trim()].filter(Boolean).join(' \u2014 ');
   var condHtml = '';
-  if (condText || item.accompanied) {
+  var accList = (Array.isArray(item.accessories) ? item.accessories.slice() : []);
+  if (item.receipt) accList.push('Original receipt');
+  var accText = accList.join(', ') + (item.accessoryNote ? (accList.length ? '. ' : '') + item.accessoryNote : '');
+  if (condText || accText) {
     condHtml = '<div class="ps-condition">';
     if (condText)         condHtml += '<p><strong>Condition:</strong> ' + esc(condText) + '</p>';
-    if (item.accompanied) condHtml += '<p><strong>Accompanied by:</strong> ' + item.accompanied + '</p>';
+    if (accText) condHtml += '<p><strong>Accompanied by:</strong> ' + esc(accText) + '</p>';
     condHtml += '</div>';
   }
   var specDefs = [
     ['Product Code', item.sku], ['Size', [item.size, item.modelSize ? '(' + item.modelSize + ')' : ''].filter(Boolean).join(' ')],
     ['Leather / Material', item.material], ['Hardware', item.hardware && item.hardware !== 'Other' ? item.hardware + (item.hardwareNote ? ' (' + item.hardwareNote + ')' : '') : (item.hardwareNote || item.hardware)],
-    ['Color', item.color], ['Origin', item.origin]
+    ['Color', item.color], ['Source', item.source], ['Made in', item.madeIn]
   ];
   var specsHtml = '<div class="ps-specs">';
   var hasSpec = false;
@@ -2366,7 +2446,7 @@ function printItem(id) {
     hasSpec = true;
   });
   if (item.dimensions) { specsHtml += '<div class="ps-spec full"><strong>Dimensions:</strong> ' + item.dimensions + '</div>'; hasSpec = true; }
-  if (item.purchased && st !== 'wishlist')  { specsHtml += '<div class="ps-spec full"><strong>Purchased:</strong> ' + item.purchased + '</div>'; hasSpec = true; }
+  if (item.purchased && st !== 'wishlist')  { specsHtml += '<div class="ps-spec full"><strong>Bought at:</strong> ' + item.purchased + '</div>'; hasSpec = true; }
   specsHtml += '</div>';
   if (!hasSpec) specsHtml = '';
   var badgesHtml = '';
